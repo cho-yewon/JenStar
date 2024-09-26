@@ -88,7 +88,6 @@ public class CreateAccountActivity extends AppCompatActivity {
                         Toast.makeText(CreateAccountActivity.this, "아이디 사용 가능합니다.", Toast.LENGTH_SHORT).show();
                     }
                 }
-
             }
         });
     }
