@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class CreateAccountActivity extends AppCompatActivity {
 
     EditText idEditText, passwordEditText, usernameEditText, birthEditText, phoneEditText, emailEditText;
-    Button signUpButton;
+    Button signUpButton, idCheckButton;
     DBHelper dbHelper;
 
     @Override
@@ -29,6 +29,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         phoneEditText = findViewById(R.id.InputPhoneNumber);
         emailEditText = findViewById(R.id.InputEmail);
         signUpButton = findViewById(R.id.CreateAccountFinish);
+        idCheckButton = findViewById(R.id.CheckID);
 
         // 회원가입 버튼 클릭 리스너
         signUpButton.setOnClickListener(new View.OnClickListener() {
@@ -41,9 +42,25 @@ public class CreateAccountActivity extends AppCompatActivity {
                 String phone = phoneEditText.getText().toString().trim();
                 String email = emailEditText.getText().toString().trim();
 
-                if (id.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(CreateAccountActivity.this, "아이디와 비밀번호를 입력하세요.", Toast.LENGTH_SHORT).show();
-                } else {
+                if (id.isEmpty()) {
+                    Toast.makeText(CreateAccountActivity.this, "아이디를 입력하세요.", Toast.LENGTH_SHORT).show();
+                }
+                else if (password.isEmpty()){
+                    Toast.makeText(CreateAccountActivity.this, "비밀번호를 입력하세요.", Toast.LENGTH_SHORT).show();
+                }
+                else if (username.isEmpty()){
+                    Toast.makeText(CreateAccountActivity.this, "이름을 입력하세요.", Toast.LENGTH_SHORT).show();
+                }
+                else if (birth.isEmpty()){
+                    Toast.makeText(CreateAccountActivity.this, "생년월일을 입력하세요.", Toast.LENGTH_SHORT).show();
+                }
+                else if (phone.isEmpty()){
+                    Toast.makeText(CreateAccountActivity.this, "전화번호를 입력하세요.", Toast.LENGTH_SHORT).show();
+                }
+                else if (email.isEmpty()){
+                    Toast.makeText(CreateAccountActivity.this, "이메일을 입력하세요.", Toast.LENGTH_SHORT).show();
+                }
+                else {
                     boolean isInserted = dbHelper.addUser(id, password, username, birth, phone, email);
                     if (isInserted) {
                         Toast.makeText(CreateAccountActivity.this, "회원가입 성공", Toast.LENGTH_SHORT).show();
@@ -52,6 +69,26 @@ public class CreateAccountActivity extends AppCompatActivity {
                         Toast.makeText(CreateAccountActivity.this, "회원가입 실패", Toast.LENGTH_SHORT).show();
                     }
                 }
+            }
+        });
+
+        idCheckButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String id = idEditText.getText().toString().trim();
+
+                if (id.isEmpty()) {
+                    Toast.makeText(CreateAccountActivity.this, "아이디를 입력하세요.", Toast.LENGTH_SHORT).show();
+                } else {
+                    boolean isIDCheck = dbHelper.duplicateID(id);
+
+                    if(isIDCheck) {
+                        Toast.makeText(CreateAccountActivity.this, "아이디가 이미 존재합니다.", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(CreateAccountActivity.this, "아이디 사용 가능합니다.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
             }
         });
     }

@@ -83,4 +83,21 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
         return count > 0;
     }
+
+    // 회원가입 아이디 중복 체크
+    public boolean duplicateID(String id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NAME,
+                new String[]{COLUMN_ID},
+                COLUMN_ID + "=?",
+                new String[]{id},
+                null, null, null);
+
+        boolean idCheck = (cursor.getCount() > 0);
+
+        cursor.close();
+        db.close();
+
+        return idCheck;
+    }
 }
