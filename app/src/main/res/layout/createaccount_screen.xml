@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:gravity="center"
+                android:gravity="center|top|fill_vertical"
                 android:paddingTop="30dp"
                 android:paddingBottom="50dp"
                 android:text="회원가입"
@@ -39,29 +39,43 @@
                 android:text="아이디"
                 android:textSize="20sp" />
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                app:layout_constraintWidth_percent="1">
 
                 <EditText
                     android:id="@+id/InputID"
-                    android:layout_width="250dp"
+                    android:layout_width="0dp"
                     android:layout_height="50dp"
-                    android:layout_marginRight="15dp"
                     android:ems="10"
                     android:hint="아이디"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0"
+                    app:layout_constraintWidth_percent="0.7" />
 
                 <Button
                     android:id="@+id/CheckID"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:text="확인"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.988"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:layout_constraintWidth_percent="0.25" />
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/비밀번호"
@@ -71,14 +85,26 @@
                 android:text="비밀번호"
                 android:textSize="20sp" />
 
-            <EditText
-                android:id="@+id/InputPW"
-                android:layout_width="250dp"
-                android:layout_height="50dp"
-                android:layout_marginBottom="20dp"
-                android:ems="10"
-                android:hint="비밀번호"
-                android:inputType="text" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="20dp">
+
+                <EditText
+                    android:id="@+id/InputPW"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:ems="10"
+                    android:hint="비밀번호"
+                    android:inputType="text"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0"
+                    app:layout_constraintWidth_percent="0.7"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/비밀번호확인"
@@ -87,7 +113,7 @@
                 android:text="비밀번호 확인"
                 android:textSize="20sp" />
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="20dp"
@@ -95,21 +121,34 @@
 
                 <EditText
                     android:id="@+id/InputCheckPW"
-                    android:layout_width="250dp"
+                    android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_marginRight="15dp"
                     android:ems="10"
                     android:hint="비밀번호 확인"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0"
+                    app:layout_constraintWidth_percent="0.7" />
 
                 <Button
                     android:id="@+id/CheckPW"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:text="확인" />
+                    android:text="확인"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.988"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:layout_constraintWidth_percent="0.25" />
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/이름"
@@ -119,14 +158,26 @@
                 android:text="이름"
                 android:textSize="20sp" />
 
-            <EditText
-                android:id="@+id/InputName"
-                android:layout_width="250dp"
-                android:layout_height="50dp"
-                android:layout_marginBottom="20dp"
-                android:ems="10"
-                android:hint="이름"
-                android:inputType="text" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="20dp">
+
+                <EditText
+                    android:id="@+id/InputName"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:ems="10"
+                    android:hint="이름"
+                    android:inputType="text"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0"
+                    app:layout_constraintWidth_percent="0.7"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/생년월일"
@@ -135,14 +186,26 @@
                 android:text="생년월일"
                 android:textSize="20sp" />
 
-            <EditText
-                android:id="@+id/InputBirth"
-                android:layout_width="250dp"
-                android:layout_height="50dp"
-                android:layout_marginBottom="20dp"
-                android:ems="10"
-                android:hint="생년월일 8자리"
-                android:inputType="date" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="20dp">
+
+                <EditText
+                    android:id="@+id/InputBirth"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:ems="10"
+                    android:hint="생년월일 8자리"
+                    android:inputType="date"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0"
+                    app:layout_constraintWidth_percent="0.7" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/전화번호"
@@ -151,14 +214,26 @@
                 android:text="전화번호"
                 android:textSize="20sp" />
 
-            <EditText
-                android:id="@+id/InputPhoneNumber"
-                android:layout_width="250dp"
-                android:layout_height="50dp"
-                android:layout_marginBottom="20dp"
-                android:ems="10"
-                android:hint="- 없이 입력하세요"
-                android:inputType="phone" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="20dp">
+
+                <EditText
+                    android:id="@+id/InputPhoneNumber"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:ems="10"
+                    android:hint="- 없이 입력하세요"
+                    android:inputType="phone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0"
+                    app:layout_constraintWidth_percent="0.7" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/이메일"
@@ -167,14 +242,26 @@
                 android:text="이메일"
                 android:textSize="20sp" />
 
-            <EditText
-                android:id="@+id/InputEmail"
-                android:layout_width="250dp"
-                android:layout_height="50dp"
-                android:layout_marginBottom="20dp"
-                android:ems="10"
-                android:hint="이메일을 입력하세요"
-                android:inputType="textEmailAddress" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="20dp">
+
+                <EditText
+                    android:id="@+id/InputEmail"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:ems="10"
+                    android:hint="이메일을 입력하세요"
+                    android:inputType="textEmailAddress"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0"
+                    app:layout_constraintWidth_percent="0.7" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <Button
                 android:id="@+id/CreateAccountFinish"
@@ -182,7 +269,7 @@
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="30dp"
-                android:text="회원가입"/>
+                android:text="회원가입" />
 
         </LinearLayout>
     </ScrollView>
