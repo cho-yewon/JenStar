@@ -22,14 +22,15 @@
 
     <Button
         android:id="@+id/SignUpButton"
-        android:layout_width="260dp"
+        android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginBottom="204dp"
         android:text="로그인"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.6" />
 
     <Button
         android:id="@+id/CreateAccountButton"
