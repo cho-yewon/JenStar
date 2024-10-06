@@ -11,11 +11,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // 데이터베이스 정보
     private static final String DATABASE_NAME = "UserDatabase.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     // 테이블 정보
     private static final String TABLE_NAME = "users";
     private static final String COLUMN_ID = "id";
+    private static  final String COLUMN_AUTHORITY = "authority";
     private static final String COLUMN_PASSWORD = "password";
     private static final String COLUMN_USERNAME = "username";
     private static final String COLUMN_BIRTH = "birth";
@@ -33,6 +34,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_NAME + "("
                 + COLUMN_ID + " TEXT PRIMARY KEY,"
+                + COLUMN_AUTHORITY + " NUMBER,"
                 + COLUMN_PASSWORD + " TEXT,"
                 + COLUMN_USERNAME + " TEXT,"
                 + COLUMN_BIRTH + " TEXT,"
@@ -54,6 +56,7 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_ID, id);
+        values.put(COLUMN_AUTHORITY, 1);
         values.put(COLUMN_PASSWORD, password);
         values.put(COLUMN_USERNAME, username);
         values.put(COLUMN_BIRTH, birth);
@@ -82,6 +85,25 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return count > 0;
+    }
+
+    //사용자 권한 탐색
+    public int checkAuthority(String username, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NAME,
+                new String[]{COLUMN_AUTHORITY},
+                COLUMN_ID + "=? AND " + COLUMN_PASSWORD + "=?",
+                new String[]{username, password},
+                null, null, null);
+        int authorityNumber = -1;
+        if (cursor != null && cursor.moveToFirst()) {
+            // 첫 번째 행으로 이동하여 값 가져오기
+            authorityNumber = cursor.getInt(0);
+            Log.d("DBHelper", "가져온 authority 값: " + authorityNumber);
+        }
+        cursor.close();
+        db.close();
+        return authorityNumber;
     }
 
     // 회원가입 아이디 중복 체크
