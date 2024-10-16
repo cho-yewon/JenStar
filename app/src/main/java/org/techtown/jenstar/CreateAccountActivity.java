@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,7 +25,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.createaccount_screen);
 
-        //변수 초기화
+        // 변수 초기화
         passPW = false;
         currentToast = null;
 
@@ -48,55 +49,14 @@ public class CreateAccountActivity extends AppCompatActivity {
             @Override
             public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
                 for (int i = start; i < end; i++) {
-                    // 유니코드 범위를 이용해 한글을 감지
                     if (Character.getType(source.charAt(i)) == Character.OTHER_LETTER) {
                         showToast("아이디에 한글을 입력할 수 없습니다.");
-                        return ""; // 한글일 경우 입력되지 않도록 함
+                        return "";
                     }
                 }
-                return null; // 한글이 아닐 경우 입력 허용
+                return null;
             }
         }});
-        passwordEditText.setFilters(new InputFilter[]{new InputFilter() {
-            @Override
-            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-                for (int i = start; i < end; i++) {
-                    // 유니코드 범위를 이용해 한글을 감지
-                    if (Character.getType(source.charAt(i)) == Character.OTHER_LETTER) {
-                        showToast("아이디에 한글을 입력할 수 없습니다.");
-                        return ""; // 한글일 경우 입력되지 않도록 함
-                    }
-                }
-                return null; // 한글이 아닐 경우 입력 허용
-            }
-        }});
-        checkPasswordEditText.setFilters(new InputFilter[]{new InputFilter() {
-            @Override
-            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-                for (int i = start; i < end; i++) {
-                    // 유니코드 범위를 이용해 한글을 감지
-                    if (Character.getType(source.charAt(i)) == Character.OTHER_LETTER) {
-                        showToast("아이디에 한글을 입력할 수 없습니다.");
-                        return ""; // 한글일 경우 입력되지 않도록 함
-                    }
-                }
-                return null; // 한글이 아닐 경우 입력 허용
-            }
-        }});
-        emailEditText.setFilters(new InputFilter[]{new InputFilter() {
-            @Override
-            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-                for (int i = start; i < end; i++) {
-                    // 유니코드 범위를 이용해 한글을 감지
-                    if (Character.getType(source.charAt(i)) == Character.OTHER_LETTER) {
-                        showToast("아이디에 한글을 입력할 수 없습니다.");
-                        return ""; // 한글일 경우 입력되지 않도록 함
-                    }
-                }
-                return null; // 한글이 아닐 경우 입력 허용
-            }
-        }});
-
 
         // 회원가입 버튼 클릭 리스너
         signUpButton.setOnClickListener(new View.OnClickListener() {
@@ -110,36 +70,25 @@ public class CreateAccountActivity extends AppCompatActivity {
                 String phone = phoneEditText.getText().toString().trim();
                 String email = emailEditText.getText().toString().trim();
 
-
-                Log.d("회원가입", "passPW" + passPW );
-
-                if (id.isEmpty()) {
-                    showToast("아이디를 입력하세요.");
-                }
-                else if (password.isEmpty()){
-                    showToast("비밀번호를 입력하세요.");
-                }
-                else if (!password.equals(checkPassword)){
+                if (!validateId(id)) {
+                    showToast("아이디는 7자 이상이어야 합니다.");
+                } else if (!validatePassword(password)) {
+                    showToast("비밀번호는 영어와 숫자를 포함하여 9자리 이상이어야 합니다.");
+                } else if (!password.equals(checkPassword)) {
                     showToast("비밀번호가 일치하지 않습니다.");
-                    passPW = false;
-                }
-                else if (username.isEmpty()){
+                } else if (username.isEmpty()) {
                     showToast("이름을 입력하세요.");
-                }
-                else if (birth.isEmpty()){
-                    showToast("생년월일을 입력하세요.");
-                }
-                else if (phone.isEmpty()){
-                    showToast("전화번호를 입력하세요.");
-                }
-                else if (email.isEmpty()){
-                    showToast("이메일을 입력하세요.");
-                }
-                else {
+                } else if (!validateBirth(birth)) {
+                    showToast("생년월일은 8자리로 입력하세요.");
+                } else if (!validatePhone(phone)) {
+                    showToast("전화번호는 11자리로 입력하세요.");
+                } else if (!validateEmail(email)) {
+                    showToast("올바른 이메일 주소를 입력하세요.");
+                } else {
                     boolean isInserted = dbHelper.addUser(id, password, username, birth, phone, email);
                     if (isInserted && passPW) {
                         showToast("회원가입 성공");
-                        finish(); // 회원가입 성공 시 화면 종료
+                        finish();
                     } else {
                         showToast("회원가입 실패");
                     }
@@ -151,15 +100,13 @@ public class CreateAccountActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String id = idEditText.getText().toString().trim();
-
                 if (id.isEmpty()) {
                     showToast("아이디를 입력하세요.");
                 } else {
                     boolean isIDCheck = dbHelper.duplicateID(id);
-
-                    if(isIDCheck) {
+                    if (isIDCheck) {
                         showToast("아이디가 이미 존재합니다.");
-                    }else{
+                    } else {
                         showToast("아이디 사용 가능합니다.");
                     }
                 }
@@ -171,12 +118,10 @@ public class CreateAccountActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String realPW = passwordEditText.getText().toString().trim();
                 String checkPW = checkPasswordEditText.getText().toString().trim();
-
-                if (realPW.equals(checkPW) && !realPW.isEmpty()){
+                if (realPW.equals(checkPW) && !realPW.isEmpty()) {
                     showToast("비밀번호가 일치합니다.");
                     passPW = true;
-                }
-                else {
+                } else {
                     showToast("비밀번호가 일치하지 않습니다.");
                     passPW = false;
                 }
@@ -184,9 +129,29 @@ public class CreateAccountActivity extends AppCompatActivity {
         });
     }
 
+    private boolean validateId(String id) {
+        return id.length() >= 7;
+    }
+
+    private boolean validatePassword(String password) {
+        return password.length() >= 9 && password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$");
+    }
+
+    private boolean validateBirth(String birth) {
+        return birth.matches("^\\d{8}$");
+    }
+
+    private boolean validatePhone(String phone) {
+        return phone.matches("^\\d{11}$");
+    }
+
+    private boolean validateEmail(String email) {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
     private void showToast(String message) {
         if (currentToast != null) {
-            currentToast.cancel(); // 이전 Toast가 있으면 취소
+            currentToast.cancel();
         }
         currentToast = Toast.makeText(CreateAccountActivity.this, message, Toast.LENGTH_SHORT);
         currentToast.show();
