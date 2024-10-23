@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="org.techtown.jenstar">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-feature android:glEsVersion="0x00030000" android:required="true" />
 
     <application
@@ -32,6 +33,8 @@
         <activity android:name=".CreateAccountActivity"></activity>
         <activity android:name=".UserMainActivity"></activity>
         <activity android:name=".AdminMainActivity"></activity>
+        <activity android:name=".CompanyMainActivity"></activity>
+        <activity android:name=".CompanyAddPageActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

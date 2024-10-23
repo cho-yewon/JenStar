@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class SignUpActivity extends AppCompatActivity {
 
+    String savedID;
+
     EditText idEditText, pwEditText;
     Button loginButton;
     DBHelper dbHelper;
@@ -77,6 +79,7 @@ public class SignUpActivity extends AppCompatActivity {
                     if (isValidUser) {
                         // 로그인 성공
                         showToast("로그인 성공");
+                        savedID = id;
                         // 메인 액티비티 또는 다른 화면으로 이동
                         if (checkAuthority == 0){
                             Intent intent = new Intent(SignUpActivity.this, AdminMainActivity.class); // 로그인 후 이동할 액티비티 설정
@@ -84,6 +87,11 @@ public class SignUpActivity extends AppCompatActivity {
                         }
                         else if (checkAuthority == 1){
                             Intent intent = new Intent(SignUpActivity.this, UserMainActivity.class); // 로그인 후 이동할 액티비티 설정
+                            startActivity(intent);
+                        }
+                        else if (checkAuthority == 2) {
+                            Intent intent = new Intent(SignUpActivity.this, CompanyMainActivity.class); // 로그인 후 이동할 액티비티 설정
+                            intent.putExtra("savedID", savedID);
                             startActivity(intent);
                         }
                         finish(); // 현재 액티비티 종료
