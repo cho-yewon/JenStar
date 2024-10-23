@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#ffeefaee"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/markerTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Title"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/markerSnippet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Snippet"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/markerLatLng"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lat, Lng"
+        android:textSize="14sp" />
+
+    <!-- Divider line -->
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:visibility="gone" />
+
+</LinearLayout>

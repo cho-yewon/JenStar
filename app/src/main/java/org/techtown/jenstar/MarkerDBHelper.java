@@ -1,11 +1,16 @@
 package org.techtown.jenstar;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MarkerDBHelper extends SQLiteOpenHelper {
 
@@ -21,6 +26,21 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
     private static final String COLUMN_SNIPPET = "snippet";
     private static final String COLUMN_LAT = "lat";
     private static final String COLUMN_LNG = "lng";
+
+    public class Marker {
+        String id;
+        String title;
+        String snippet;
+        Double lat;
+        Double lng;
+        public Marker(String id, String title, String snippet, Double lat, Double lng) {
+            this.id = id;
+            this.title = title;
+            this.snippet = snippet;
+            this.lat = lat;
+            this.lng = lng;
+        }
+    }
 
 
     // 생성자
@@ -86,6 +106,35 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
 
         db.close();
         return result != -1;
+    }
+
+    //마커 갯수 체크
+    public List<Marker> getMarkers() {
+        List<Marker> markerList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_NAME,
+                null,null,null,
+                null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                // 각 컬럼 값을 가져옴
+                @SuppressLint("Range") String id = cursor.getString(cursor.getColumnIndex(COLUMN_ID));
+                @SuppressLint("Range") String title = cursor.getString(cursor.getColumnIndex(COLUMN_TITLE));
+                @SuppressLint("Range") String snippet = cursor.getString(cursor.getColumnIndex(COLUMN_SNIPPET));
+                @SuppressLint("Range") Double lat = cursor.getDouble(cursor.getColumnIndex(COLUMN_LAT));
+                @SuppressLint("Range") Double lng = cursor.getDouble(cursor.getColumnIndex(COLUMN_LNG));
+
+                // Marker 객체 생성 후 리스트에 추가
+                Marker marker = new Marker(id, title, snippet, lat, lng);
+                markerList.add(marker);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        return markerList;
     }
 
 }

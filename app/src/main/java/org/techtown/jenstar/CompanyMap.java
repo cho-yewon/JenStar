@@ -23,13 +23,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import org.techtown.jenstar.MarkerPageActivity;
+import java.util.List;
 
 public class CompanyMap extends Fragment implements OnMapReadyCallback {
 
     private MapView mapView = null;
     private GoogleMap googleMap;
     private FusedLocationProviderClient fusedLocationClient;
+
+    MarkerDBHelper markerDBHelper;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,16 +50,18 @@ public class CompanyMap extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(@NonNull GoogleMap map) {
         googleMap = map;
+        markerDBHelper = new MarkerDBHelper(getContext());
 
-        // 기본 마커 설정 (서울 예시)
-        LatLng SEOUL = new LatLng(37.56, 126.97);
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(SEOUL);
-        markerOptions.title("서울");
-        markerOptions.snippet("수도");
-        googleMap.addMarker(markerOptions);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(SEOUL));
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+        List<MarkerDBHelper.Marker> markers = markerDBHelper.getMarkers();
+
+        for (MarkerDBHelper.Marker marker : markers){
+            LatLng MARKER = new LatLng(marker.lat, marker.lng);
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(MARKER);
+            markerOptions.title(marker.title);
+            markerOptions.snippet(marker.snippet);
+            googleMap.addMarker(markerOptions);
+        }
 
         // 내 위치를 지도에 표시
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -75,9 +79,6 @@ public class CompanyMap extends Fragment implements OnMapReadyCallback {
                 if (location != null) {
                     LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
-
-                    // 현재 위치에 마커 추가 (선택 사항)
-                    //googleMap.addMarker(new MarkerOptions().position(currentLocation).title("현재 위치"));
                 }
             }
         });
@@ -85,6 +86,7 @@ public class CompanyMap extends Fragment implements OnMapReadyCallback {
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
+                markerDBHelper.getMarkers();
                 // BottomSheetDialogFragment 호출
                 MarkerPageActivity bottomSheet = new MarkerPageActivity();
                 bottomSheet.show(getParentFragmentManager(), "markerpageactivity");
