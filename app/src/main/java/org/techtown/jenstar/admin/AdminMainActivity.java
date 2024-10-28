@@ -1,9 +1,10 @@
-package org.techtown.jenstar;
+package org.techtown.jenstar.admin;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.techtown.jenstar.R;
 
 public class AdminMainActivity extends AppCompatActivity {
     @Override

@@ -1,4 +1,4 @@
-package org.techtown.jenstar;
+package org.techtown.jenstar.company;
 
 import android.os.Bundle;
 
@@ -10,6 +10,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import org.techtown.jenstar.marker.MarkerAdapter;
+import org.techtown.jenstar.database.MarkerDBHelper;
+import org.techtown.jenstar.R;
+
 import java.util.List;
 
 public class CompanyMenu extends Fragment {

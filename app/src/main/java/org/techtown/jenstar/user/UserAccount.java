@@ -1,4 +1,4 @@
-package org.techtown.jenstar;
+package org.techtown.jenstar.user;
 
 import android.os.Bundle;
 
@@ -10,12 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class CompanyAccount extends Fragment {
+import org.techtown.jenstar.R;
+
+public class UserAccount extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_company_account, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_user_account, container, false);
 
         return rootView;
     }

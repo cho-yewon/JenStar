@@ -31,11 +31,11 @@
         </activity>
         <activity android:name=".SignUpActivity"></activity>
         <activity android:name=".CreateAccountActivity"></activity>
-        <activity android:name=".UserMainActivity"></activity>
-        <activity android:name=".AdminMainActivity"></activity>
-        <activity android:name=".CompanyMainActivity"></activity>
-        <activity android:name=".CompanyAddPageActivity"></activity>
-        <activity android:name=".MarkerDetailActivity"></activity>
+        <activity android:name=".user.UserMainActivity"></activity>
+        <activity android:name=".admin.AdminMainActivity"></activity>
+        <activity android:name=".company.CompanyMainActivity"></activity>
+        <activity android:name=".company.CompanyAddPageActivity"></activity>
+        <activity android:name=".marker.MarkerDetailActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

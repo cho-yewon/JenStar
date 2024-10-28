@@ -1,4 +1,4 @@
-package org.techtown.jenstar;
+package org.techtown.jenstar.marker;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.techtown.jenstar.database.MarkerDBHelper;
+import org.techtown.jenstar.R;
+
 import java.util.List;
 
 public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.MarkerViewHolder> {

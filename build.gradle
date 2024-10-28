@@ -1,4 +1,22 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // Google 서비스 플러그인 클래스패스 추가
+        classpath("com.google.gms:google-services:4.3.15") // 최신 버전 사용 권장
+    }
+}
+
 plugins {
-alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.application) apply false
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
 }

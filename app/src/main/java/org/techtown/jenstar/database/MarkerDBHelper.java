@@ -1,4 +1,4 @@
-package org.techtown.jenstar;
+package org.techtown.jenstar.database;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -28,11 +28,11 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
     private static final String COLUMN_LNG = "lng";
 
     public class Marker {
-        String id;
-        String title;
-        String snippet;
-        Double lat;
-        Double lng;
+        public String id;
+        public String title;
+        public String snippet;
+        public Double lat;
+        public Double lng;
         public Marker(String id, String title, String snippet, Double lat, Double lng) {
             this.id = id;
             this.title = title;

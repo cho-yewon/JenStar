@@ -11,6 +11,11 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.techtown.jenstar.admin.AdminMainActivity;
+import org.techtown.jenstar.company.CompanyMainActivity;
+import org.techtown.jenstar.database.DBHelper;
+import org.techtown.jenstar.user.UserMainActivity;
+
 public class SignUpActivity extends AppCompatActivity {
 
     String savedID;

@@ -1,31 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:background="@drawable/menu_touch_color"
     android:padding="8dp">
 
-    <TextView
-        android:id="@+id/markerTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Title"
-        android:textSize="16sp"
-        android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/markerSnippet"
-        android:layout_width="wrap_content"
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="126dp"
         android:layout_height="wrap_content"
-        android:text="Snippet"
-        android:textSize="14sp" />
+        android:layout_weight="1"
+        app:srcCompat="@drawable/ic_empty" />
 
-    <TextView
-        android:id="@+id/markerLatLng"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Lat, Lng"
-        android:textSize="14sp" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/markerTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Title"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/markerSnippet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Snippet"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/markerLatLng"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lat, Lng"
+            android:textSize="14sp" />
+
+    </LinearLayout>
 
 </LinearLayout>

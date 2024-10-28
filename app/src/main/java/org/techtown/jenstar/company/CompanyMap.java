@@ -1,4 +1,4 @@
-package org.techtown.jenstar;
+package org.techtown.jenstar.company;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -22,6 +22,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+
+import org.techtown.jenstar.database.MarkerDBHelper;
+import org.techtown.jenstar.marker.MarkerPageActivity;
+import org.techtown.jenstar.R;
 
 import java.util.List;
 
@@ -86,18 +90,37 @@ public class CompanyMap extends Fragment implements OnMapReadyCallback {
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
-                markerDBHelper.getMarkers();
+                // 클릭한 위치가 마커의 실제 범위 내에 있는지 확인하기 위해 거리 계산
+                float[] results = new float[1];
+                LatLng markerPosition = marker.getPosition();
+                LatLng markerLatLng = marker.getPosition(); // marker의 위치를 가져옴
 
-                Bundle markerBundle = new Bundle();
-                markerBundle.putString("marker_title", marker.getTitle());
-                markerBundle.putString("marker_snippet", marker.getSnippet());
-                // BottomSheetDialogFragment 호출
-                MarkerPageActivity bottomSheet = new MarkerPageActivity();
-                bottomSheet.setArguments(markerBundle);
-                bottomSheet.show(getParentFragmentManager(), "markerpageactivity");
-                return true;
+                Location.distanceBetween(markerLatLng.latitude, markerLatLng.longitude,
+                        markerPosition.latitude, markerPosition.longitude, results);
+
+                // 클릭한 위치가 마커의 실제 범위 내에 있는지 확인 (반지름을 줄여서 클릭 범위 줄이기)
+                float YOUR_DESIRED_RADIUS = 1.0f; // 원하는 클릭 범위 반지름 설정 (단위: 미터)
+                if (results[0] < YOUR_DESIRED_RADIUS) {
+                    // 클릭된 마커와 연결된 작업 수행
+                    markerDBHelper.getMarkers();
+
+                    Bundle markerBundle = new Bundle();
+                    markerBundle.putString("marker_title", marker.getTitle());
+                    markerBundle.putString("marker_snippet", marker.getSnippet());
+
+                    // BottomSheetDialogFragment 호출
+                    MarkerPageActivity bottomSheet = new MarkerPageActivity();
+                    bottomSheet.setArguments(markerBundle);
+                    bottomSheet.show(getParentFragmentManager(), "markerpageactivity");
+
+                    return true; // 이벤트 소비 - 기본 클릭 동작을 실행하지 않음
+                }
+
+                // 클릭한 위치가 마커 범위를 벗어나면 마커 클릭 동작을 처리하지 않음
+                return false;
             }
         });
+
     }
 
     @Override

@@ -1,9 +1,12 @@
-package org.techtown.jenstar;
+package org.techtown.jenstar.marker;
 
 import android.os.Bundle;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.techtown.jenstar.database.MarkerDBHelper;
+import org.techtown.jenstar.R;
 
 public class MarkerDetailActivity extends AppCompatActivity {
     private MarkerDBHelper markerDBHelper;

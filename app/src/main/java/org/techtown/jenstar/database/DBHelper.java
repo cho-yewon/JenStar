@@ -1,4 +1,4 @@
-package org.techtown.jenstar;
+package org.techtown.jenstar.database;
 
 import android.content.ContentValues;
 import android.content.Context;

@@ -35,6 +35,19 @@
             android:orientation="vertical">
 
             <!-- 여러 정보들을 추가하는 예시 -->
+            <ImageView
+                android:id="@+id/add_marker_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_empty"
+                tools:srcCompat="@drawable/ic_empty" />
+
+            <Button
+                android:id="@+id/add_photo_btn_upload"
+                android:text="사진추가"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <TextView
                 android:id="@+id/marker_title"
                 android:layout_width="wrap_content"

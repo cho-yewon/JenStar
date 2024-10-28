@@ -1,4 +1,4 @@
-package org.techtown.jenstar;
+package org.techtown.jenstar.user;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +14,11 @@ import android.view.ViewGroup;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+
+import org.techtown.jenstar.R;
+import org.techtown.jenstar.company.CompanyAccount;
+import org.techtown.jenstar.company.CompanyMap;
+import org.techtown.jenstar.company.CompanyMenu;
 
 public class UserMainActivity extends AppCompatActivity{
 

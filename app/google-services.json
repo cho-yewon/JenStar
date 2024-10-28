@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "560328429259",
+    "project_id": "jenstar-6f6c4",
+    "storage_bucket": "jenstar-6f6c4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:560328429259:android:3089915e8567124dc5154e",
+        "android_client_info": {
+          "package_name": "org.techtown.jenstar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApSdyi53enFkTwR0Aq1yfkbnKQAbhBw0I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
