@@ -35,6 +35,7 @@
         <activity android:name=".AdminMainActivity"></activity>
         <activity android:name=".CompanyMainActivity"></activity>
         <activity android:name=".CompanyAddPageActivity"></activity>
+        <activity android:name=".MarkerDetailActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

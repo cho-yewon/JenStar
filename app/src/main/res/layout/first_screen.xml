@@ -14,7 +14,7 @@
         android:layout_height="130dp"
         android:layout_marginTop="80dp"
         android:gravity="center"
-        android:text="JenlyStar"
+        android:text="JenStar"
         android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

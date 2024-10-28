@@ -108,7 +108,7 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
-    //마커 갯수 체크
+    //마커 정보 가져오기
     public List<Marker> getMarkers() {
         List<Marker> markerList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -136,5 +136,26 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
 
         return markerList;
     }
+
+    public Marker getMarkerById(String markerTitle) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NAME,
+                null,
+                COLUMN_TITLE + "=?",
+                new String[]{markerTitle},
+                null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            @SuppressLint("Range") String id = cursor.getString(cursor.getColumnIndex(COLUMN_ID));
+            @SuppressLint("Range") String title = cursor.getString(cursor.getColumnIndex(COLUMN_TITLE));
+            @SuppressLint("Range") String snippet = cursor.getString(cursor.getColumnIndex(COLUMN_SNIPPET));
+            @SuppressLint("Range") Double lat = cursor.getDouble(cursor.getColumnIndex(COLUMN_LAT));
+            @SuppressLint("Range") Double lng = cursor.getDouble(cursor.getColumnIndex(COLUMN_LNG));
+            cursor.close();
+            return new Marker(id, title, snippet, lat, lng);
+        }
+        return null;
+    }
+
 
 }

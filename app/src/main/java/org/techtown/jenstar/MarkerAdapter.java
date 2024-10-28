@@ -1,5 +1,7 @@
 package org.techtown.jenstar;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +12,12 @@ import java.util.List;
 
 public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.MarkerViewHolder> {
     private List<MarkerDBHelper.Marker> markerList;
+    private Context context;
 
     // Constructor
-    public MarkerAdapter(List<MarkerDBHelper.Marker> markerList) {
+    public MarkerAdapter(Context context, List<MarkerDBHelper.Marker> markerList) {
         this.markerList = markerList;
+        this.context = context;
     }
 
     @NonNull
@@ -31,12 +35,13 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.MarkerView
         holder.markerSnippet.setText(marker.snippet);
         holder.markerLatLng.setText(marker.lat + ", " + marker.lng);
 
-        // 마지막 아이템이 아닌 경우에만 구분선 표시
-        if (position < markerList.size() - 1) {
-            holder.divider.setVisibility(View.VISIBLE);
-        } else {
-            holder.divider.setVisibility(View.GONE);
-        }
+
+        // 클릭 리스너 설정: 각 마커를 클릭하면 상세 정보 페이지로 이동
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, MarkerDetailActivity.class);
+            intent.putExtra("marker_title", marker.title);
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -54,7 +59,6 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.MarkerView
             markerTitle = itemView.findViewById(R.id.markerTitle);
             markerSnippet = itemView.findViewById(R.id.markerSnippet);
             markerLatLng = itemView.findViewById(R.id.markerLatLng);
-            divider = itemView.findViewById(R.id.divider);
         }
     }
 }

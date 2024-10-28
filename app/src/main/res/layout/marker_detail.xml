@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/menu_touch_color"
-    android:padding="8dp">
+    android:padding="16dp">
 
     <TextView
-        android:id="@+id/markerTitle"
+        android:id="@+id/detailTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Title"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/markerSnippet"
+        android:id="@+id/detailSnippet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Snippet"
-        android:textSize="14sp" />
+        android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/markerLatLng"
+        android:id="@+id/detailLatLng"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Lat, Lng"
-        android:textSize="14sp" />
+        android:textSize="18sp" />
 
 </LinearLayout>

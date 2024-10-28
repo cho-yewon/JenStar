@@ -87,8 +87,13 @@ public class CompanyMap extends Fragment implements OnMapReadyCallback {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
                 markerDBHelper.getMarkers();
+
+                Bundle markerBundle = new Bundle();
+                markerBundle.putString("marker_title", marker.getTitle());
+                markerBundle.putString("marker_snippet", marker.getSnippet());
                 // BottomSheetDialogFragment 호출
                 MarkerPageActivity bottomSheet = new MarkerPageActivity();
+                bottomSheet.setArguments(markerBundle);
                 bottomSheet.show(getParentFragmentManager(), "markerpageactivity");
                 return true;
             }

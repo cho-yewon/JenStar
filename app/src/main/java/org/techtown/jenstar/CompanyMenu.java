@@ -27,7 +27,7 @@ public class CompanyMenu extends Fragment {
         markerDBHelper = new MarkerDBHelper(getContext());
         List<MarkerDBHelper.Marker> markerList = markerDBHelper.getMarkers();
 
-        markerAdapter = new MarkerAdapter(markerList);
+        markerAdapter = new MarkerAdapter(getContext(), markerList);
         markerRecyclerView.setAdapter(markerAdapter);
 
         return view;
