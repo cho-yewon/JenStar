@@ -1,15 +1,21 @@
 package org.techtown.jenstar.user;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -17,29 +23,117 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
-import org.techtown.jenstar.marker.MarkerPageActivity;
+import org.techtown.jenstar.database.MarkerDBHelper;
+import org.techtown.jenstar.marker.user_MarkerPageActivity;
 import org.techtown.jenstar.R;
 
+import java.util.List;
 
 public class UserMap extends Fragment implements OnMapReadyCallback {
 
     private MapView mapView = null;
+    private GoogleMap googleMap;
+    private FusedLocationProviderClient fusedLocationClient;
+
+    MarkerDBHelper markerDBHelper;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_user_map, container, false);
-
-        mapView = (MapView)rootView.findViewById(R.id.user_map);
+        mapView = (MapView) rootView.findViewById(R.id.user_map);
         mapView.getMapAsync(this);
-
         return rootView;
+    }
+
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap map) {
+        googleMap = map;
+        markerDBHelper = new MarkerDBHelper(getContext());
+
+        if (markerDBHelper.getMarkers() == null)
+            return;
+
+        List<MarkerDBHelper.Marker> markers = markerDBHelper.getMarkers();
+
+
+        for (MarkerDBHelper.Marker marker : markers){
+            LatLng MARKER = new LatLng(marker.lat, marker.lng);
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(MARKER);
+            markerOptions.title(marker.title);
+            markerOptions.snippet(marker.snippet);
+            googleMap.addMarker(markerOptions);
+        }
+
+        // 내 위치를 지도에 표시
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        }
+
+        googleMap.setMyLocationEnabled(true); // 내 위치 버튼 활성화
+
+        // 현재 위치로 카메라 이동
+        fusedLocationClient.getLastLocation().addOnSuccessListener(requireActivity(), new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+                    LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
+                }
+            }
+        });
+
+        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                Bundle markerBundle = new Bundle();
+                markerBundle.putString("marker_title", marker.getTitle());
+                markerBundle.putString("marker_snippet", marker.getSnippet());
+
+                // savedID 가져오기
+                String savedID = getArguments().getString("savedID");
+                markerBundle.putString("savedID", savedID);
+
+                // user_MarkerPageActivity로 전달
+                user_MarkerPageActivity bottomSheet = new user_MarkerPageActivity();
+                bottomSheet.setArguments(markerBundle);
+                bottomSheet.show(getParentFragmentManager(), "user_markerpageactivity");
+
+                // 클릭한 위치가 마커의 실제 범위 내에 있는지 확인하기 위해 거리 계산
+                float[] results = new float[1];
+                LatLng markerPosition = marker.getPosition();
+                LatLng markerLatLng = marker.getPosition(); // marker의 위치를 가져옴
+
+                Location.distanceBetween(markerLatLng.latitude, markerLatLng.longitude,
+                        markerPosition.latitude, markerPosition.longitude, results);
+
+                // 클릭한 위치가 마커의 실제 범위 내에 있는지 확인 (반지름을 줄여서 클릭 범위 줄이기)
+                float YOUR_DESIRED_RADIUS = 1.0f; // 원하는 클릭 범위 반지름 설정 (단위: 미터)
+                if (results[0] < YOUR_DESIRED_RADIUS) {
+                    // 클릭된 마커와 연결된 작업 수행
+                    markerDBHelper.getMarkers();
+
+
+
+                    return true; // 이벤트 소비 - 기본 클릭 동작을 실행하지 않음
+                }
+
+                // 클릭한 위치가 마커 범위를 벗어나면 마커 클릭 동작을 처리하지 않음
+                return false;
+            }
+        });
+
     }
 
     @Override
@@ -93,25 +187,5 @@ public class UserMap extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    @Override
-    public void onMapReady(@NonNull GoogleMap googleMap) {
-        LatLng SEOUL = new LatLng(37.56, 126.97);
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(SEOUL);
-        markerOptions.title("서울");
-        markerOptions.snippet("수도");
-        googleMap.addMarker(markerOptions);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(SEOUL));
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(13));
 
-        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(@NonNull Marker marker) {
-                // BottomSheetDialogFragment 호출
-                MarkerPageActivity bottomSheet = new MarkerPageActivity();
-                bottomSheet.show(getParentFragmentManager(), "markerpageactivity");
-                return true;
-            }
-        });
-    }
 }

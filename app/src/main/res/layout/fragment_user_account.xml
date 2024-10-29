@@ -1,14 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".company.CompanyMap">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="사용자정보" />
+        android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:translationX="40dp"
+            android:translationY="50dp"
+            app:layout_constraintHeight_percent="0.1"
+            app:layout_constraintWidth_percent="0.1"
+            app:srcCompat="@drawable/ic_account"
+            tools:layout_editor_absoluteX="6dp"
+            tools:layout_editor_absoluteY="5dp"
+            tools:src="@drawable/ic_account" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="85dp"
+            android:layout_marginEnd="200dp"
+            android:text="이름"
+            android:textSize="20sp"
+            android:translationX="100dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.05"
+            app:layout_constraintHorizontal_weight="0.1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_weight="0.1"
+            app:layout_constraintWidth_percent="0.2" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

@@ -17,7 +17,7 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
 
     // 데이터베이스 정보
     private static final String DATABASE_NAME = "UserDatabase.db";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 8;
 
     // 테이블 정보
     private static final String TABLE_NAME = "markers";
@@ -46,6 +46,16 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
     // 생성자
     public MarkerDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        SQLiteDatabase db = this.getWritableDatabase();
+        if(!isTableExists(db, TABLE_NAME))
+            onCreate(db);
+    }
+
+    private boolean isTableExists(SQLiteDatabase db, String tableName) {
+        Cursor cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name=?", new String[]{tableName});
+        boolean exists = (cursor.getCount() > 0);
+        cursor.close();
+        return exists;
     }
 
     // 테이블 생성
@@ -155,6 +165,11 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
             return new Marker(id, title, snippet, lat, lng);
         }
         return null;
+    }
+
+    public List<String> getFavoriteMarkers(String userId, UserFavoriteDBHelper favoriteDBHelper) {
+        List<String> favoriteMarkers = favoriteDBHelper.getUserFavorites(userId);
+        return favoriteMarkers;
     }
 
 

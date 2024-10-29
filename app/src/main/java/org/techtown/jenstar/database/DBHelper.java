@@ -7,32 +7,65 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 public class DBHelper extends SQLiteOpenHelper {
 
-    // 데이터베이스 정보
     private static final String DATABASE_NAME = "UserDatabase.db";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 8;
 
-    // 테이블 정보
     private static final String TABLE_NAME = "users";
     private static final String COLUMN_ID = "id";
-    private static  final String COLUMN_AUTHORITY = "authority";
+    private static final String COLUMN_AUTHORITY = "authority";
     private static final String COLUMN_PASSWORD = "password";
     private static final String COLUMN_USERNAME = "username";
     private static final String COLUMN_BIRTH = "birth";
     private static final String COLUMN_PHONE = "phone";
     private static final String COLUMN_EMAIL = "email";
 
+    private final Context context;
+    private static final String DB_PATH = "/data/data/org.techtown.jenstar/databases/";
 
-    // 생성자
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
+
+        if (!checkDatabaseExists()) {
+            try {
+                copyDatabase();
+            } catch (Exception e) {
+                Log.e("DBHelper", "Error copying database: " + e.getMessage());
+            }
+        }
     }
 
-    // 테이블 생성
+    private boolean checkDatabaseExists() {
+        File dbFile = new File(DB_PATH + DATABASE_NAME);
+        return dbFile.exists();
+    }
+
+    private void copyDatabase() throws Exception {
+        InputStream input = context.getAssets().open(DATABASE_NAME);
+        String outFileName = DB_PATH + DATABASE_NAME;
+        OutputStream output = new FileOutputStream(outFileName);
+
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = input.read(buffer)) > 0) {
+            output.write(buffer, 0, length);
+        }
+
+        output.flush();
+        output.close();
+        input.close();
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_NAME + "("
+        String CREATE_USERS_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "("
                 + COLUMN_ID + " TEXT PRIMARY KEY,"
                 + COLUMN_AUTHORITY + " NUMBER,"
                 + COLUMN_PASSWORD + " TEXT,"
@@ -44,15 +77,17 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_USERS_TABLE);
     }
 
-    // 데이터베이스 업그레이드 시 테이블 재생성
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        onCreate(db);
+        // 기존 데이터베이스를 유지하고 업그레이드할 수 있도록 로직을 추가할 수 있습니다.
+        // 필요시 새로운 열을 추가하거나, 데이터베이스 변경 사항을 반영합니다.
+        if (oldVersion < newVersion) {
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN new_column TEXT DEFAULT ''"); // 예시 코드
+            Log.i("DBHelper", "Database upgraded to version " + newVersion);
+        }
     }
 
-    // 새로운 사용자 추가
-    public boolean addUser(String id, String password, String username, String birth, String phone, String email ) {
+    public boolean addUser(String id, String password, String username, String birth, String phone, String email) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_ID, id);
@@ -64,16 +99,15 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(COLUMN_EMAIL, email);
 
         long result = db.insert(TABLE_NAME, null, values);
-        if(result == -1) {
+        if (result == -1) {
             Log.e("DBHelper", "Insertion failed for user: " + id);
         } else {
             Log.i("DBHelper", "Insertion succeeded for user: " + id);
         }
         db.close();
-        return result != -1; // -1은 실패
+        return result != -1;
     }
 
-    // 사용자 로그인 검증
     public boolean checkUser(String username, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME,
@@ -87,7 +121,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return count > 0;
     }
 
-    //사용자 권한 탐색
     public int checkAuthority(String username, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME,
@@ -97,7 +130,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 null, null, null);
         int authorityNumber = -1;
         if (cursor != null && cursor.moveToFirst()) {
-            // 첫 번째 행으로 이동하여 값 가져오기
             authorityNumber = cursor.getInt(0);
             Log.d("DBHelper", "가져온 authority 값: " + authorityNumber);
         }
@@ -106,7 +138,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return authorityNumber;
     }
 
-    // 회원가입 아이디 중복 체크
     public boolean duplicateID(String id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME,

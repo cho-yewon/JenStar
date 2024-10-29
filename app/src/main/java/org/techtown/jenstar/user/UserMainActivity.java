@@ -16,21 +16,31 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 import org.techtown.jenstar.R;
-import org.techtown.jenstar.company.CompanyAccount;
-import org.techtown.jenstar.company.CompanyMap;
-import org.techtown.jenstar.company.CompanyMenu;
+import org.techtown.jenstar.database.UserFavoriteDBHelper;
 
 public class UserMainActivity extends AppCompatActivity{
 
     private FragmentManager fragmentManager = getSupportFragmentManager();
-    private CompanyMap fragmentMap = new CompanyMap();
-    private CompanyMenu fragmentMenu = new CompanyMenu();
-    private CompanyAccount fragmentAccount = new CompanyAccount();
+    private UserMap fragmentMap = new UserMap();
+    private UserMenu fragmentMenu = new UserMenu();
+    private UserAccount fragmentAccount = new UserAccount();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        UserFavoriteDBHelper dbHelper = new UserFavoriteDBHelper(this);
+        dbHelper.createTableIfNotExists();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_main_screen);
+        String savedID = getIntent().getStringExtra("savedID");
+
+        Bundle bundle = new Bundle();
+        bundle.putString("savedID", savedID);
+        fragmentMap.setArguments(bundle);
+
+        Bundle menuBundle = new Bundle();
+        menuBundle.putString("userId", savedID); // userId로 사용될 savedID
+        fragmentMenu.setArguments(menuBundle);
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.user_main_frame_layout, fragmentMap).commitAllowingStateLoss();
