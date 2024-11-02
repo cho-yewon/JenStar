@@ -56,16 +56,7 @@ public class CompanyMap extends Fragment implements OnMapReadyCallback {
         googleMap = map;
         markerDBHelper = new MarkerDBHelper(getContext());
 
-        List<MarkerDBHelper.Marker> markers = markerDBHelper.getMarkers();
-
-        for (MarkerDBHelper.Marker marker : markers){
-            LatLng MARKER = new LatLng(marker.lat, marker.lng);
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(MARKER);
-            markerOptions.title(marker.title);
-            markerOptions.snippet(marker.snippet);
-            googleMap.addMarker(markerOptions);
-        }
+        loadMarkers();
 
         // 내 위치를 지도에 표시
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -123,6 +114,19 @@ public class CompanyMap extends Fragment implements OnMapReadyCallback {
 
     }
 
+    private void loadMarkers() {
+        googleMap.clear();  // 기존 마커 삭제
+        List<MarkerDBHelper.Marker> markers = markerDBHelper.getMarkers();
+        for (MarkerDBHelper.Marker marker : markers){
+            LatLng MARKER = new LatLng(marker.lat, marker.lng);
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(MARKER);
+            markerOptions.title(marker.title);
+            markerOptions.snippet(marker.snippet);
+            googleMap.addMarker(markerOptions);
+        }
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -145,6 +149,9 @@ public class CompanyMap extends Fragment implements OnMapReadyCallback {
     public void onResume() {
         super.onResume();
         mapView.onResume();
+        if (googleMap != null) {
+            loadMarkers();
+        }
     }
 
     @Override

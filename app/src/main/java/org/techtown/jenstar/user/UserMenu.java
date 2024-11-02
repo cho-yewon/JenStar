@@ -58,7 +58,7 @@ public class UserMenu extends Fragment {
         }
 
         // MarkerAdapter를 사용하여 즐겨찾기 마커 리스트 설정
-        markerAdapter = new MarkerAdapter(getContext(), favoriteMarkers);
+        markerAdapter = new MarkerAdapter(getContext(), favoriteMarkers, userId);
         markerRecyclerView.setAdapter(markerAdapter);
 
         return view;

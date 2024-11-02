@@ -4,6 +4,8 @@ package org.techtown.jenstar.company;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -25,10 +27,14 @@ import com.google.firebase.storage.StorageReference;
 import org.techtown.jenstar.database.MarkerDBHelper;
 import org.techtown.jenstar.R;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
 public class CompanyAddPageActivity extends AppCompatActivity {
 
-    Button close_btn, save_btn;
-    EditText titleEditText, snippetEditText, latEditText, lngEditText;
+    Button close_btn, save_btn, convertButton;
+    EditText titleEditText, snippetEditText, latEditText, lngEditText, addressEditText;
     MarkerDBHelper markerDBHelper;
 
     private static final int PICK_IMAGE_FROM_ALBUM = 0;
@@ -61,14 +67,25 @@ public class CompanyAddPageActivity extends AppCompatActivity {
         snippetEditText = findViewById(R.id.MarkerSnippet);
         latEditText = findViewById(R.id.MarkerLat);
         lngEditText = findViewById(R.id.MarkerLng);
+        addressEditText = findViewById(R.id.MarkerAddress);
         close_btn = findViewById(R.id.close_button);
         save_btn = findViewById(R.id.save_marker);
+        convertButton = findViewById(R.id.convertButton);
 
 
         close_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
+            }
+        });
+
+        convertButton.setOnClickListener(view -> {
+            String address = addressEditText.getText().toString().trim();
+            if (!address.isEmpty()) {
+                convertAddressToLatLng(address);
+            } else {
+                Toast.makeText(CompanyAddPageActivity.this, "주소를 입력하세요.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -87,7 +104,7 @@ public class CompanyAddPageActivity extends AppCompatActivity {
                 }
                 else {
                     if(isAdd) {
-                        uploadImageToFirebase(title);
+                        uploadImageToFirebase(CompanyAddPageActivity.this, title, imageUri);
                         finish();
                     }
                     else {
@@ -111,34 +128,55 @@ public class CompanyAddPageActivity extends AppCompatActivity {
             }
         }) ;
    }
-    private void uploadImageToFirebase(String markerTitle) {
-        if (imageUri != null) {
+
+    private void convertAddressToLatLng(String address) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address location = addresses.get(0);
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+
+                latEditText.setText(String.valueOf(latitude));
+                lngEditText.setText(String.valueOf(longitude));
+            } else {
+                Toast.makeText(this, "해당 주소로 위치를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "주소 변환 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void uploadImageToFirebase(Context context, String markerTitle, Uri uri) {
+        if (uri != null) {
             // 파일 이름을 마커의 타이틀로 설정
             String imageFileName = markerTitle + ".png";
 
             StorageReference storageRef = firebaseStorage.getReference().child("images").child(imageFileName);
 
             // 파일 업로드
-            storageRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
-                Toast.makeText(CompanyAddPageActivity.this, "저장되었습니다.", Toast.LENGTH_LONG).show();
+            storageRef.putFile(uri).addOnSuccessListener(taskSnapshot -> {
+                Toast.makeText(context, "저장되었습니다.", Toast.LENGTH_LONG).show();
             }).addOnFailureListener(e -> {
-                Toast.makeText(CompanyAddPageActivity.this, "이미지 업로드 실패: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "이미지 업로드 실패: " + e.getMessage(), Toast.LENGTH_LONG).show();
             });
         } else {
-            Toast.makeText(CompanyAddPageActivity.this, "이미지를 선택하세요.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "이미지를 선택하세요.", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void loadImageFromFirebase(Activity activity, Context context, String markerTitle, ImageView Image) {
+    public void loadImageFromFirebase(Context context, String markerTitle, ImageView Image) {
         // 파일 이름을 마커의 타이틀로 설정
         String imageFileName = markerTitle + ".png";
         StorageReference storageRef = firebaseStorage.getReference().child("images").child(imageFileName);
 
         storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
             // 이미지 URI를 통해 이미지 로드
-            Glide.with(activity).load(uri).into(Image);
+            Glide.with(context).load(uri).into(Image);
         }).addOnFailureListener(e -> {
-            Toast.makeText(context, "이미지를 불러오지 못했습니다: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Image.setImageResource(R.drawable.ic_empty);
         });
     }
 

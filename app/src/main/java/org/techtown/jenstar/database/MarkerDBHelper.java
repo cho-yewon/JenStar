@@ -17,7 +17,7 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
 
     // 데이터베이스 정보
     private static final String DATABASE_NAME = "UserDatabase.db";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 12;
 
     // 테이블 정보
     private static final String TABLE_NAME = "markers";
@@ -78,6 +78,20 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    private boolean isColumnExists(SQLiteDatabase db, String tableName, String columnName) {
+        Cursor cursor = db.rawQuery("PRAGMA table_info(" + tableName + ")", null);
+        boolean exists = false;
+        while (cursor.moveToNext()) {
+            @SuppressLint("Range") String currentColumn = cursor.getString(cursor.getColumnIndex("name"));
+            if (currentColumn.equals(columnName)) {
+                exists = true;
+                break;
+            }
+        }
+        cursor.close();
+        return exists;
+    }
+
     // 외래키 활성화
     public void onConfigure(SQLiteDatabase db) {
         super.onConfigure(db);
@@ -118,6 +132,32 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
+    //사용자 마커 정보 변경
+    public boolean updateMarker(String id, String title, String snippet, String lat, String lng) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        long result;
+
+        values.put(COLUMN_TITLE, title);
+        values.put(COLUMN_SNIPPET, snippet);
+        values.put(COLUMN_LAT, lat);
+        values.put(COLUMN_LNG, lng);
+
+        result = db.update(TABLE_NAME, values, COLUMN_ID + "=? AND " + COLUMN_TITLE + "=?", new String[]{id, title});
+
+        db.close();
+        return result != -1;
+    }
+
+    //마커 삭제
+    public boolean deleteMarker(String id, String title) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int deletedRows = db.delete(TABLE_NAME, COLUMN_ID + "=? AND " + COLUMN_TITLE + "=?", new String[]{id, title});
+        db.close();
+        return deletedRows > 0; // 삭제된 행이 1개 이상이면 성공으로 간주
+    }
+
     //마커 정보 가져오기
     public List<Marker> getMarkers() {
         List<Marker> markerList = new ArrayList<>();
@@ -145,6 +185,35 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
         db.close();
 
         return markerList;
+    }
+
+    //승인해야할 마커 가져오기
+    public List<Marker> getApproveMarkers() {
+        List<Marker> markerApproveList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_NAME,
+                null,null,null,
+                null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                // 각 컬럼 값을 가져옴
+                @SuppressLint("Range") String id = cursor.getString(cursor.getColumnIndex(COLUMN_ID));
+                @SuppressLint("Range") String title = cursor.getString(cursor.getColumnIndex(COLUMN_TITLE));
+                @SuppressLint("Range") String snippet = cursor.getString(cursor.getColumnIndex(COLUMN_SNIPPET));
+                @SuppressLint("Range") Double lat = cursor.getDouble(cursor.getColumnIndex(COLUMN_LAT));
+                @SuppressLint("Range") Double lng = cursor.getDouble(cursor.getColumnIndex(COLUMN_LNG));
+
+                // Marker 객체 생성 후 리스트에 추가
+                Marker marker = new Marker(id, title, snippet, lat, lng);
+                markerApproveList.add(marker);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        return markerApproveList;
     }
 
     public Marker getMarkerById(String markerTitle) {

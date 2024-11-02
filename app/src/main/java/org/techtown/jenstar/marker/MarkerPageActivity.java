@@ -38,7 +38,7 @@ public class MarkerPageActivity extends BottomSheetDialogFragment {
             String snippet = getMarker.getString("marker_snippet");
 
             companyAddPageActivity.initializeFirebaseStorage();
-            companyAddPageActivity.loadImageFromFirebase(getActivity(), getContext(), title, markerImage);
+            companyAddPageActivity.loadImageFromFirebase( getContext(), title, markerImage);
             markerTitle.setText(title);
             markerSnippet.setText(snippet);
         }

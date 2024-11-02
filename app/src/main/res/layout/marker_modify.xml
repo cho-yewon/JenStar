@@ -36,15 +36,15 @@
 
             <!-- 여러 정보들을 추가하는 예시 -->
             <ImageView
-                android:id="@+id/add_marker_image"
+                android:id="@+id/marker_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_empty"
                 tools:srcCompat="@drawable/ic_empty" />
 
             <Button
-                android:id="@+id/add_photo_btn_upload"
-                android:text="사진추가"
+                android:id="@+id/modify_photo_btn_upload"
+                android:text="사진변경"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -81,38 +81,6 @@
                 android:hint="내용" />
 
             <TextView
-                android:id="@+id/marker_address"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="마커 주소"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/MarkerAddress"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="56dp"
-                    android:layout_marginEnd="2dp"
-                    android:ems="10"
-                    android:hint="주소"
-                    android:inputType="text" />
-
-                <Button
-                    android:id="@+id/convertButton"
-                    android:layout_width="0dp"
-                    android:layout_weight="0.3"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
-                    android:text="변환" />
-            </LinearLayout>
-
-            <TextView
                 android:id="@+id/marker_lat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -126,8 +94,7 @@
                 android:layout_height="56dp"
                 android:ems="10"
                 android:inputType="numberDecimal"
-                android:hint="위도"
-                android:enabled="false" />
+                android:hint="위도" />
 
             <TextView
                 android:id="@+id/marker_lng"
@@ -143,17 +110,35 @@
                 android:layout_height="56dp"
                 android:ems="10"
                 android:inputType="numberDecimal"
-                android:hint="경도"
-                android:enabled="false" />
+                android:hint="경도" />
 
-            <Button
-                android:id="@+id/save_marker"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginTop="40dp"
-                android:text="저장"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/modify_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="5dp"
+                    android:text="수정"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <Button
+                    android:id="@+id/delete_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="5dp"
+                    android:text="삭제"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+            </LinearLayout>
+
             <!-- 필요한 만큼 추가 텍스트나 뷰 추가 -->
 
         </LinearLayout>

@@ -35,6 +35,10 @@ public class CompanyMainActivity extends AppCompatActivity{
 
         String savedID = getIntent().getStringExtra("savedID");
 
+        Bundle menuBundle = new Bundle();
+        menuBundle.putString("userId", savedID); // userId로 사용될 savedID
+        fragmentMenu.setArguments(menuBundle);
+
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.company_main_frame_layout, fragmentMap).commitAllowingStateLoss();
 

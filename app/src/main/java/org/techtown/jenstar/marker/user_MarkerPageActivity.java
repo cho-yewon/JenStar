@@ -71,7 +71,7 @@ public class user_MarkerPageActivity extends BottomSheetDialogFragment {
 
             // Firebase에서 이미지 로드
             companyAddPageActivity.initializeFirebaseStorage();
-            companyAddPageActivity.loadImageFromFirebase(getActivity(), getContext(), title, markerImage);
+            companyAddPageActivity.loadImageFromFirebase(getContext(), title, markerImage);
             markerTitle.setText(title);
             markerSnippet.setText(snippet);
         }

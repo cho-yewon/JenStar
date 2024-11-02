@@ -1,6 +1,5 @@
 package org.techtown.jenstar.marker;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -17,17 +16,16 @@ import org.techtown.jenstar.R;
 
 import java.util.List;
 
-public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.MarkerViewHolder> {
+public class admin_MarkerAdapter extends RecyclerView.Adapter<admin_MarkerAdapter.MarkerViewHolder> {
     private List<MarkerDBHelper.Marker> markerList;
     private Context context;
     private String userId;
     private CompanyAddPageActivity companyAddPageActivity;
 
     // Constructor
-    public MarkerAdapter(Context context, List<MarkerDBHelper.Marker> markerList, String userId) {
+    public admin_MarkerAdapter(Context context, List<MarkerDBHelper.Marker> markerList) {
         this.markerList = markerList;
         this.context = context;
-        this.userId = userId;
         this.companyAddPageActivity = new CompanyAddPageActivity(); // CompanyAddPageActivity 인스턴스 생성
         companyAddPageActivity.initializeFirebaseStorage(); // Firebase 초기화
     }
@@ -36,7 +34,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.MarkerView
     @Override
     public MarkerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_company_menu_item, parent, false);
+                .inflate(R.layout.fragment_admin_approve_menu_item, parent, false);
 
         return new MarkerViewHolder(view);
     }
@@ -50,13 +48,6 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.MarkerView
 
         companyAddPageActivity.loadImageFromFirebase(context, marker.title, holder.markerImage);
 
-        // 클릭 리스너 설정: 각 마커를 클릭하면 상세 정보 페이지로 이동
-        holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, MarkerDetailActivity.class);
-            intent.putExtra("marker_title", marker.title);
-            intent.putExtra("userId", userId);
-            context.startActivity(intent);
-        });
     }
 
     @Override
@@ -77,6 +68,4 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.MarkerView
             markerLatLng = itemView.findViewById(R.id.markerLatLng);
         }
     }
-
-
 }

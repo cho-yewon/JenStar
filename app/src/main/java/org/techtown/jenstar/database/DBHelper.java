@@ -15,7 +15,7 @@ import java.io.OutputStream;
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "UserDatabase.db";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 12;
 
     private static final String TABLE_NAME = "users";
     private static final String COLUMN_ID = "id";
@@ -121,12 +121,12 @@ public class DBHelper extends SQLiteOpenHelper {
         return count > 0;
     }
 
-    public int checkAuthority(String username, String password) {
+    public int checkAuthority(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME,
                 new String[]{COLUMN_AUTHORITY},
-                COLUMN_ID + "=? AND " + COLUMN_PASSWORD + "=?",
-                new String[]{username, password},
+                COLUMN_ID + "=?",
+                new String[]{username},
                 null, null, null);
         int authorityNumber = -1;
         if (cursor != null && cursor.moveToFirst()) {

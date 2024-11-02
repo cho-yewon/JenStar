@@ -81,7 +81,7 @@ public class SignUpActivity extends AppCompatActivity {
                 } else {
                     // DBHelper를 통해 로그인 검증
                     boolean isValidUser = dbHelper.checkUser(id, pw);
-                    int checkAuthority = dbHelper.checkAuthority(id, pw);
+                    int checkAuthority = dbHelper.checkAuthority(id);
                     if (isValidUser) {
                         // 로그인 성공
                         showToast("로그인 성공");
