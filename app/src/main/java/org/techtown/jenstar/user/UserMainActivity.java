@@ -24,6 +24,7 @@ public class UserMainActivity extends AppCompatActivity{
     private UserMap fragmentMap = new UserMap();
     private UserMenu fragmentMenu = new UserMenu();
     private UserAccount fragmentAccount = new UserAccount();
+    private UserSearch fragmentSearch = new UserSearch();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,12 +75,17 @@ public class UserMainActivity extends AppCompatActivity{
 
                     break;
 
+                case R.id.ic_search:
+                    transaction.replace(R.id.user_main_frame_layout, fragmentSearch).commitAllowingStateLoss();
+
+                    break;
+
                 case R.id.ic_menu:
                     transaction.replace(R.id.user_main_frame_layout, fragmentMenu).commitAllowingStateLoss();
 
                     break;
 
-                case R.id.ic_account:
+                case R.id.ic_user:
                     transaction.replace(R.id.user_main_frame_layout, fragmentAccount).commitAllowingStateLoss();
 
                     break;

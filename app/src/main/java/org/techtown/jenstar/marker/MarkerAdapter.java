@@ -46,7 +46,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.MarkerView
         MarkerDBHelper.Marker marker = markerList.get(position);
         holder.markerTitle.setText(marker.title);
         holder.markerSnippet.setText(marker.snippet);
-        holder.markerLatLng.setText(marker.lat + ", " + marker.lng);
+        holder.markerLatLng.setText(marker.getRoadAddress() != null ? marker.getRoadAddress() : "도로명 주소 없음");
 
         companyAddPageActivity.loadImageFromFirebase(context, marker.title, holder.markerImage);
 

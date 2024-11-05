@@ -1,6 +1,7 @@
 package org.techtown.jenstar.marker;
 
 import android.content.Intent;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,12 @@ import org.techtown.jenstar.company.CompanyAddPageActivity;
 import org.techtown.jenstar.database.DBHelper;
 import org.techtown.jenstar.database.MarkerDBHelper;
 import org.techtown.jenstar.R;
+
+import android.location.Address;
+import android.location.Geocoder;
+import java.util.List;
+import java.util.Locale;
+import java.io.IOException;
 
 public class MarkerDetailActivity extends AppCompatActivity {
     private MarkerDBHelper markerDBHelper;
@@ -94,14 +101,30 @@ public class MarkerDetailActivity extends AppCompatActivity {
     }
 
     private void loadMarkerDetails() {
-        if (markerTitle != null) {
-            MarkerDBHelper.Marker marker = markerDBHelper.getMarkerById(markerTitle);
-            if (marker != null) {
-                companyAddPageActivity.loadImageFromFirebase(this, markerTitle, markerImage);
-                titleTextView.setText(marker.title);
-                snippetTextView.setText(marker.snippet);
-                latLngTextView.setText(marker.lat + ", " + marker.lng);
+        MarkerDBHelper.Marker marker = markerDBHelper.getMarkerById(markerTitle);
+
+        if (marker != null) {
+            titleTextView.setText(marker.title);
+            snippetTextView.setText(marker.snippet);
+
+            // Geocoder 초기화 (한국어 설정)
+            Geocoder geocoder = new Geocoder(this, Locale.KOREA);
+
+            // 위도와 경도로 도로명 주소 변환
+            try {
+                List<Address> addresses = geocoder.getFromLocation(marker.lat, marker.lng, 1);
+                if (addresses != null && !addresses.isEmpty()) {
+                    Address address = addresses.get(0);
+                    String roadAddress = address.getAddressLine(0); // 도로명 주소 전체 가져오기
+                    latLngTextView.setText(roadAddress != null ? roadAddress : "도로명 주소 없음");
+                } else {
+                    latLngTextView.setText("도로명 주소 없음");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                latLngTextView.setText("주소 변환 실패");
             }
+
         }
     }
 }

@@ -21,7 +21,7 @@ import java.util.List;
 
 public class user_MarkerPageActivity extends BottomSheetDialogFragment {
 
-    TextView markerTitle, markerSnippet;
+    TextView markerTitle, markerSnippet, extraInfo1, extraInfo2;
     ImageView markerImage;
     ImageButton favoriteButton;
     CompanyAddPageActivity companyAddPageActivity;
@@ -48,6 +48,8 @@ public class user_MarkerPageActivity extends BottomSheetDialogFragment {
         markerImage = view.findViewById(R.id.marker_image);
         markerTitle = view.findViewById(R.id.marker_title);
         markerSnippet = view.findViewById(R.id.marker_snippet);
+        extraInfo1 = view.findViewById(R.id.extra_info_1);
+        extraInfo2 = view.findViewById(R.id.extra_info_2);
         favoriteButton = view.findViewById(R.id.favorite);
 
         // 즐겨찾기 상태 초기화

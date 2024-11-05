@@ -33,12 +33,22 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
         public String snippet;
         public Double lat;
         public Double lng;
+        public String roadAddress;
+
         public Marker(String id, String title, String snippet, Double lat, Double lng) {
             this.id = id;
             this.title = title;
             this.snippet = snippet;
             this.lat = lat;
             this.lng = lng;
+        }
+
+        public String getRoadAddress() {
+            return roadAddress;
+        }
+
+        public void setRoadAddress(String roadAddress) {
+            this.roadAddress = roadAddress;
         }
     }
 

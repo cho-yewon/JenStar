@@ -79,13 +79,29 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // 기존 데이터베이스를 유지하고 업그레이드할 수 있도록 로직을 추가할 수 있습니다.
-        // 필요시 새로운 열을 추가하거나, 데이터베이스 변경 사항을 반영합니다.
-        if (oldVersion < newVersion) {
-            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN new_column TEXT DEFAULT ''"); // 예시 코드
-            Log.i("DBHelper", "Database upgraded to version " + newVersion);
+        Cursor cursor = db.rawQuery("PRAGMA table_info(" + TABLE_NAME + ")", null);
+        boolean columnExists = false;
+
+        // "name" 컬럼이 존재하는지 확인
+        int nameColumnIndex = cursor.getColumnIndex("name");
+        if (nameColumnIndex != -1) {
+            while (cursor.moveToNext()) {
+                String columnName = cursor.getString(nameColumnIndex);
+                if ("new_column".equals(columnName)) {
+                    columnExists = true;
+                    break;
+                }
+            }
+        }
+        cursor.close();
+
+        // 컬럼이 없으면 추가
+        if (!columnExists) {
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN new_column TEXT DEFAULT ''");
         }
     }
+
+
 
     public boolean addUser(String id, String password, String username, String birth, String phone, String email) {
         SQLiteDatabase db = this.getWritableDatabase();
