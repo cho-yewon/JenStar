@@ -250,6 +250,14 @@ public class UserSearch extends Fragment implements OnMapReadyCallback {
                     feature.setPolygonStyle(selectedStyle);
                     districtFound = true;
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(center, 13));
+                }else if (selectedDistrict.equals("세종시") && "세종특별자치시".equals(districtName)) {
+                    // 세종시 선택 시 세종특별자치시 feature에만 스타일 적용
+                    GeoJsonPolygonStyle selectedStyle = new GeoJsonPolygonStyle();
+                    selectedStyle.setStrokeColor(Color.RED);        // 외곽선 빨간색
+                    selectedStyle.setFillColor(0x3FFF0000);         // 반투명한 녹색 배경
+                    feature.setPolygonStyle(selectedStyle);
+                    districtFound = true;
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getDistrictCoordinates(districtName), 13));
                 } else {
                     feature.setPolygonStyle(transparentStyle);
                 }
