@@ -1,6 +1,7 @@
 package org.techtown.jenstar.user;
 
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -168,7 +169,6 @@ public class UserSearch extends Fragment implements OnMapReadyCallback {
         }
 
         List<String> districtsList = new ArrayList<>(Arrays.asList(getResources().getStringArray(districtsArrayId)));
-        districtsList.add(0, "전체"); // "전체" 항목을 맨 앞에 추가
 
         ArrayAdapter<String> districtAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, districtsList);
         districtAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -232,25 +232,25 @@ public class UserSearch extends Fragment implements OnMapReadyCallback {
             transparentStyle.setFillColor(Color.TRANSPARENT);
             transparentStyle.setStrokeColor(Color.TRANSPARENT);
 
-            // 선택된 구/군에만 스타일 적용
+            LatLng center = getDistrictCoordinates(selectedDistrict); // 선택된 시/구의 중심 좌표
+            double radius = 5000; // 예시로 5km 반경 설정
+
             for (GeoJsonFeature feature : layer.getFeatures()) {
-                String districtName = feature.getProperty("name"); // 실제 GeoJSON에서 필드명 확인 필요
+                String districtName = feature.getProperty("name"); // GeoJSON에서 필드명 확인 필요
+                LatLng featureCenter = getFeatureCenter(feature);   // 각 feature의 중심 좌표 계산
 
                 if (feature.getGeometry() instanceof com.google.maps.android.data.geojson.GeoJsonPoint) {
-                    // Point 타입의 경우 투명한 아이콘을 설정하여 보이지 않게 처리
                     GeoJsonPointStyle pointStyle = new GeoJsonPointStyle();
-                    pointStyle.setVisible(false); // 기본적으로 보이지 않게 설정
+                    pointStyle.setVisible(false);
                     feature.setPointStyle(pointStyle);
-                } else if (selectedDistrict.equals(districtName)) {
-                    // 선택된 구/군에만 스타일 설정
+                } else if (selectedDistrict.equals(districtName) && isWithinRadius(center, featureCenter, radius)) {
                     GeoJsonPolygonStyle selectedStyle = new GeoJsonPolygonStyle();
-                    selectedStyle.setStrokeColor(Color.RED);        // 외곽선 빨간색
-                    selectedStyle.setFillColor(0x3FFF0000);         // 반투명한 녹색 배경
+                    selectedStyle.setStrokeColor(Color.RED);
+                    selectedStyle.setFillColor(0x3FFF0000);
                     feature.setPolygonStyle(selectedStyle);
                     districtFound = true;
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getDistrictCoordinates(districtName), 13));
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(center, 13));
                 } else {
-                    // 선택된 구/군이 아닌 경우 투명하게 설정
                     feature.setPolygonStyle(transparentStyle);
                 }
             }
@@ -270,6 +270,37 @@ public class UserSearch extends Fragment implements OnMapReadyCallback {
             Log.e("UserSearch", "JSONException while parsing GeoJSON data.", e);
         }
     }
+
+    private boolean isWithinRadius(LatLng center, LatLng target, double radius) {
+        float[] results = new float[1];
+        Location.distanceBetween(
+                center.latitude, center.longitude,
+                target.latitude, target.longitude,
+                results
+        );
+        return results[0] <= radius;
+    }
+
+
+    private LatLng getFeatureCenter(GeoJsonFeature feature) {
+        List<LatLng> coordinates = new ArrayList<>();
+        if (feature.getGeometry() instanceof GeoJsonPolygon) {
+            GeoJsonPolygon polygon = (GeoJsonPolygon) feature.getGeometry();
+            for (List<LatLng> polygonCoords : polygon.getCoordinates()) {
+                coordinates.addAll(polygonCoords);
+            }
+        }
+
+        double latSum = 0.0;
+        double lngSum = 0.0;
+        for (LatLng coord : coordinates) {
+            latSum += coord.latitude;
+            lngSum += coord.longitude;
+        }
+
+        return new LatLng(latSum / coordinates.size(), lngSum / coordinates.size());
+    }
+
 
     private LatLng getDistrictCoordinates(String district) {
         String cityName = citySpinner.getSelectedItem().toString();
