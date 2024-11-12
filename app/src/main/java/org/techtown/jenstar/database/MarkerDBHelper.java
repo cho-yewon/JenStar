@@ -27,7 +27,7 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
     private static final String COLUMN_LAT = "lat";
     private static final String COLUMN_LNG = "lng";
 
-    public class Marker {
+    public static class Marker {
         public String id;
         public String title;
         public String snippet;

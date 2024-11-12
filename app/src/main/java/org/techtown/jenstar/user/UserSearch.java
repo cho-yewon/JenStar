@@ -1,6 +1,11 @@
 package org.techtown.jenstar.user;
 
+import android.annotation.SuppressLint;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,20 +14,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.data.geojson.GeoJsonFeature;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.maps.android.data.geojson.GeoJsonPoint;
 import com.google.maps.android.data.geojson.GeoJsonPointStyle;
 import com.google.maps.android.data.geojson.GeoJsonPolygon;
 import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
@@ -32,20 +43,30 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.techtown.jenstar.R;
+import org.techtown.jenstar.database.MarkerDBHelper;
+import org.techtown.jenstar.marker.MarkerAdapter;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class UserSearch extends Fragment implements OnMapReadyCallback {
 
+    private static final String TABLE_NAME = "markers";
     private Spinner citySpinner;
     private Spinner districtSpinner;
     private MapView mapView;
     private GoogleMap googleMap;
+    private MarkerDBHelper markerDBHelper;
+    private Button btnList;
+    private RecyclerView markerRecyclerView;
+    private MarkerAdapter markerAdapter;
+    private List<MarkerDBHelper.Marker> markerList = new ArrayList<>();
 
+    @SuppressLint("MissingInflatedId")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -57,13 +78,34 @@ public class UserSearch extends Fragment implements OnMapReadyCallback {
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
+        btnList = view.findViewById(R.id.btnList);
+        markerRecyclerView = view.findViewById(R.id.markerRecyclerView); // fragment_user_menu.xml의 RecyclerView와 연결
+        markerRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        markerAdapter = new MarkerAdapter(getContext(),markerList, ""); // 이미 있는 MarkerAdapter 사용
+        markerRecyclerView.setAdapter(markerAdapter);
+
         setupCitySpinner();
+        markerDBHelper = new MarkerDBHelper(getContext());
 
         // citySpinner 초기값 설정 - 리스너 등록 전 설정
         citySpinner.setSelection(0, false);
         updateDistrictSpinner(0);
 
+        btnList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMarkersInViewArea();
+                markerRecyclerView.setVisibility(View.VISIBLE);
+            }
+        });
+
         return view;
+    }
+
+    private void showMarkersInViewArea() {
+        markerList.clear();
+        markerList.addAll(showSelectedAreaMarkers("cityName", "districtName")); // showSelectedAreaMarkers 메서드로 현재 영역의 마커 가져오기
+        markerAdapter.notifyDataSetChanged(); // 리스트 업데이트
     }
 
     private void setupCitySpinner() {
@@ -177,14 +219,17 @@ public class UserSearch extends Fragment implements OnMapReadyCallback {
         districtSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedCity = citySpinner.getSelectedItem().toString();
                 String selectedDistrict = (String) parent.getItemAtPosition(position);
                 showSelectedAreaOnMap(selectedDistrict);
+                showSelectedAreaMarkers(selectedCity, selectedDistrict);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -194,6 +239,83 @@ public class UserSearch extends Fragment implements OnMapReadyCallback {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 12));
         loadGeoJsonLayer();
     }
+
+    private List<MarkerDBHelper.Marker> showSelectedAreaMarkers(String city, String district) {
+        if (googleMap == null) return null;
+        LatLngBounds bounds = googleMap.getProjection().getVisibleRegion().latLngBounds;
+        SQLiteDatabase db = markerDBHelper.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE lat BETWEEN ? AND ? AND lng BETWEEN ? AND ?";
+        Cursor cursor = db.rawQuery(query, new String[]{
+                String.valueOf(bounds.southwest.latitude),
+                String.valueOf(bounds.northeast.latitude),
+                String.valueOf(bounds.southwest.longitude),
+                String.valueOf(bounds.northeast.longitude)
+        });
+
+        List<MarkerDBHelper.Marker> markerList = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") String id = cursor.getString(cursor.getColumnIndex("id"));
+                @SuppressLint("Range") String title = cursor.getString(cursor.getColumnIndex("title"));
+                @SuppressLint("Range") String snippet = cursor.getString(cursor.getColumnIndex("snippet"));
+                @SuppressLint("Range") double lat = cursor.getDouble(cursor.getColumnIndex("lat"));
+                @SuppressLint("Range") double lng = cursor.getDouble(cursor.getColumnIndex("lng"));
+                MarkerDBHelper.Marker marker = new MarkerDBHelper.Marker(id, title, snippet, lat, lng);
+                markerList.add(marker);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+
+        for (MarkerDBHelper.Marker marker : markerList) {
+            LatLng position = new LatLng(marker.lat, marker.lng);
+            if (bounds.contains(position)) {
+                googleMap.addMarker(new MarkerOptions().position(position).title(marker.title).snippet(marker.snippet));
+            }
+        }
+
+        return markerList;
+    }
+
+
+
+    // MarkerDBHelper.java: Add method to get all markers
+    public List<MarkerDBHelper.Marker> getAllMarkers() {
+        List<MarkerDBHelper.Marker> markerList = new ArrayList<>();
+        SQLiteDatabase db = markerDBHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                int columnIndex = cursor.getColumnIndex("id");
+                if (columnIndex != -1) {
+                    String id = cursor.getString(columnIndex);
+                    @SuppressLint("Range") String title = cursor.getString(cursor.getColumnIndex("title"));
+                    @SuppressLint("Range") String snippet = cursor.getString(cursor.getColumnIndex("snippet"));
+                    int latIndex = cursor.getColumnIndex("lat");
+                    if (latIndex != -1) {
+                        double lat = cursor.getDouble(latIndex);
+                        int lngIndex = cursor.getColumnIndex("lng");
+                        if (lngIndex != -1) {
+                            double lng = cursor.getDouble(lngIndex);
+                            MarkerDBHelper.Marker marker = new MarkerDBHelper.Marker(id, title, snippet, lat, lng);
+                            markerList.add(marker);
+                        }
+
+                    }
+
+                }
+            }while (cursor.moveToNext()) ;
+        }
+
+        cursor.close();
+        db.close();
+        return markerList;
+    }
+
+
 
     private void loadGeoJsonLayer() {
         try {
@@ -214,16 +336,26 @@ public class UserSearch extends Fragment implements OnMapReadyCallback {
     }
 
     private GeoJsonLayer currentLayer; // 현재 표시된 구/군 레이어를 추적
+    private GeoJsonLayer previousLayer;
 
     public void showSelectedAreaOnMap(String selectedDistrict) {
         try {
-            // 이전에 표시된 레이어가 있으면 제거
-            if (currentLayer != null) {
-                currentLayer.removeLayerFromMap();
-                currentLayer = null;
+            if (previousLayer != null) {
+                Log.d("UserSearch", "Checking feature: " + selectedDistrict);
+                for (GeoJsonFeature feature : previousLayer.getFeatures()) {
+                    GeoJsonPolygonStyle transparentStyle = new GeoJsonPolygonStyle();
+                    transparentStyle.setFillColor(Color.TRANSPARENT);
+                    transparentStyle.setStrokeColor(Color.TRANSPARENT);
+                    feature.setPolygonStyle(transparentStyle);
+                }
+                previousLayer.removeLayerFromMap(); // 이전 레이어 제거 (선택 사항)
             }
 
-            // GeoJSON 파일 로드하여 레이어 생성
+            // 모든 지도 요소 제거
+            Log.d("UserSearch", "Clearing all map elements.");
+            googleMap.clear();  // 모든 마커와 레이어를 초기화
+
+            // GeoJSON 파일 로드하여 새로운 레이어 생성
             GeoJsonLayer layer = new GeoJsonLayer(googleMap, R.raw.filtered_data, getContext());
             boolean districtFound = false;
 
@@ -246,28 +378,21 @@ public class UserSearch extends Fragment implements OnMapReadyCallback {
                 } else if (selectedDistrict.equals(districtName) && isWithinRadius(center, featureCenter, radius)) {
                     GeoJsonPolygonStyle selectedStyle = new GeoJsonPolygonStyle();
                     selectedStyle.setStrokeColor(Color.RED);
-                    selectedStyle.setFillColor(0x3FFF0000);
+                    selectedStyle.setFillColor(0x3FFF0000); // 반투명 빨간색
                     feature.setPolygonStyle(selectedStyle);
                     districtFound = true;
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(center, 13));
-                }else if (selectedDistrict.equals("세종시") && "세종특별자치시".equals(districtName)) {
-                    // 세종시 선택 시 세종특별자치시 feature에만 스타일 적용
-                    GeoJsonPolygonStyle selectedStyle = new GeoJsonPolygonStyle();
-                    selectedStyle.setStrokeColor(Color.RED);        // 외곽선 빨간색
-                    selectedStyle.setFillColor(0x3FFF0000);         // 반투명한 녹색 배경
-                    feature.setPolygonStyle(selectedStyle);
-                    districtFound = true;
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getDistrictCoordinates(districtName), 13));
                 } else {
                     feature.setPolygonStyle(transparentStyle);
                 }
             }
 
-            // 구/군이 존재하면 레이어 추가 및 카메라 이동
+            // 구/군이 존재하면 레이어 추가 및 현재 레이어로 설정
             if (districtFound) {
                 layer.addLayerToMap();
+                previousLayer = currentLayer;
                 currentLayer = layer; // 현재 레이어 추적
-
+                Log.d("UserSearch", "Layer added to map for district: " + selectedDistrict);
             } else {
                 Log.e("UserSearch", "Selected district not found in GeoJSON data.");
             }
@@ -276,8 +401,12 @@ public class UserSearch extends Fragment implements OnMapReadyCallback {
             Log.e("UserSearch", "IOException while loading GeoJSON file.", e);
         } catch (JSONException e) {
             Log.e("UserSearch", "JSONException while parsing GeoJSON data.", e);
+        } catch (Exception e) {
+            Log.e("UserSearch", "Unexpected error occurred: " + e.getMessage(), e);
         }
+
     }
+
 
     private boolean isWithinRadius(LatLng center, LatLng target, double radius) {
         float[] results = new float[1];
