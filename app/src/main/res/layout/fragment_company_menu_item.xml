@@ -7,7 +7,6 @@
     android:background="@drawable/menu_touch_color"
     android:padding="8dp">
 
-
     <ImageView
         android:id="@+id/markerImage"
         android:layout_width="126dp"
@@ -16,33 +15,52 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:paddingStart="8dp"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/markerTitle"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Title"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingStart="8dp">
 
-        <TextView
-            android:id="@+id/markerSnippet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Snippet"
-            android:textSize="14sp" />
+            <TextView
+                android:id="@+id/markerTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Title"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/markerLatLng"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Lat, Lng"
-            android:textSize="14sp" />
+            <TextView
+                android:id="@+id/markerSnippet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Snippet"
+                android:textSize="14sp" />
 
+            <TextView
+                android:id="@+id/markerLatLng"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lat, Lng"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/accessText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textSize="14sp" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

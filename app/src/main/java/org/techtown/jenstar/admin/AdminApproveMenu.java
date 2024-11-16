@@ -21,7 +21,7 @@ import java.util.List;
 
 public class AdminApproveMenu extends Fragment {
     private RecyclerView markerRecyclerView;
-    private admin_MarkerAdapter markerAdapter;
+    private admin_MarkerAdapter admin_MarkerAdapter;
     private MarkerDBHelper markerDBHelper;
     private String userId;
 
@@ -40,8 +40,8 @@ public class AdminApproveMenu extends Fragment {
 
         // 모든 마커 가져오기
         List<MarkerDBHelper.Marker> markerList = markerDBHelper.getMarkers(); // 모든 마커 가져오기
-        markerAdapter = new admin_MarkerAdapter(getContext(), markerList);
-        markerRecyclerView.setAdapter(markerAdapter);
+        admin_MarkerAdapter = new admin_MarkerAdapter(getContext(), markerList);
+        markerRecyclerView.setAdapter(admin_MarkerAdapter);
 
         return view;
     }

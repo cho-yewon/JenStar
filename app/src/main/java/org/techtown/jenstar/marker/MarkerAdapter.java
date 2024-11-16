@@ -3,6 +3,7 @@ package org.techtown.jenstar.marker;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,19 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.MarkerView
         holder.markerSnippet.setText(marker.snippet);
         holder.markerLatLng.setText(marker.getRoadAddress() != null ? marker.getRoadAddress() : "도로명 주소 없음");
 
+        if(marker.state == 0) {
+            holder.accessText.setTextColor(Color.GRAY);
+            holder.accessText.setText("승인 대기중");
+        }
+        else if(marker.state == 1) {
+            holder.accessText.setTextColor(Color.GREEN);
+            holder.accessText.setText("승인 완료");
+        }
+        else {
+            holder.accessText.setTextColor(Color.RED);
+            holder.accessText.setText("승인 거부");
+        }
+
         companyAddPageActivity.loadImageFromFirebase(context, marker.title, holder.markerImage);
 
         // 클릭 리스너 설정: 각 마커를 클릭하면 상세 정보 페이지로 이동
@@ -66,7 +80,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.MarkerView
 
     // ViewHolder class
     public static class MarkerViewHolder extends RecyclerView.ViewHolder {
-        public TextView markerTitle, markerSnippet, markerLatLng;
+        public TextView markerTitle, markerSnippet, markerLatLng, accessText;
         public ImageView markerImage;
 
         public MarkerViewHolder(@NonNull View itemView) {
@@ -75,6 +89,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<MarkerAdapter.MarkerView
             markerTitle = itemView.findViewById(R.id.markerTitle);
             markerSnippet = itemView.findViewById(R.id.markerSnippet);
             markerLatLng = itemView.findViewById(R.id.markerLatLng);
+            accessText = itemView.findViewById(R.id.accessText);
         }
     }
 

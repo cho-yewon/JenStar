@@ -66,12 +66,14 @@ public class UserMap extends Fragment implements OnMapReadyCallback {
 
 
         for (MarkerDBHelper.Marker marker : markers){
-            LatLng MARKER = new LatLng(marker.lat, marker.lng);
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(MARKER);
-            markerOptions.title(marker.title);
-            markerOptions.snippet(marker.snippet);
-            googleMap.addMarker(markerOptions);
+            if(marker.state == 1) {
+                LatLng MARKER = new LatLng(marker.lat, marker.lng);
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(MARKER);
+                markerOptions.title(marker.title);
+                markerOptions.snippet(marker.snippet);
+                googleMap.addMarker(markerOptions);
+            }
         }
 
         // 내 위치를 지도에 표시

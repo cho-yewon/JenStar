@@ -17,7 +17,7 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
 
     // 데이터베이스 정보
     private static final String DATABASE_NAME = "UserDatabase.db";
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 13;
 
     // 테이블 정보
     private static final String TABLE_NAME = "markers";
@@ -26,6 +26,7 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
     private static final String COLUMN_SNIPPET = "snippet";
     private static final String COLUMN_LAT = "lat";
     private static final String COLUMN_LNG = "lng";
+    private static final String COLUMN_STATE = "state";
 
     public static class Marker {
         public String id;
@@ -33,14 +34,16 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
         public String snippet;
         public Double lat;
         public Double lng;
+        public int state;
         public String roadAddress;
 
-        public Marker(String id, String title, String snippet, Double lat, Double lng) {
+        public Marker(String id, String title, String snippet, Double lat, Double lng, int state) {
             this.id = id;
             this.title = title;
             this.snippet = snippet;
             this.lat = lat;
             this.lng = lng;
+            this.state = state;
         }
 
         public String getRoadAddress() {
@@ -76,7 +79,8 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
                 + COLUMN_TITLE + " TEXT PRIMARY KEY,"
                 + COLUMN_SNIPPET + " TEXT,"
                 + COLUMN_LAT + " REAL,"
-                + COLUMN_LNG + " REAL"
+                + COLUMN_LNG + " REAL,"
+                + COLUMN_STATE + " INTEGER DEFAULT 0"
                 + ")";
         db.execSQL(CREATE_USERS_TABLE);
     }
@@ -129,10 +133,10 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
             values.put(COLUMN_SNIPPET, snippet);
             values.put(COLUMN_LAT, lat);
             values.put(COLUMN_LNG, lng);
+            values.put(COLUMN_STATE, 0);
 
             result = db.insert(TABLE_NAME, null, values);
             db.close();
-            Log.e("dasdas", "addMarker: " + result );
         }
         else {
             result = -1;
@@ -185,9 +189,10 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
                 @SuppressLint("Range") String snippet = cursor.getString(cursor.getColumnIndex(COLUMN_SNIPPET));
                 @SuppressLint("Range") Double lat = cursor.getDouble(cursor.getColumnIndex(COLUMN_LAT));
                 @SuppressLint("Range") Double lng = cursor.getDouble(cursor.getColumnIndex(COLUMN_LNG));
+                @SuppressLint("Range") Integer state = cursor.getInt(cursor.getColumnIndex(COLUMN_STATE));
 
                 // Marker 객체 생성 후 리스트에 추가
-                Marker marker = new Marker(id, title, snippet, lat, lng);
+                Marker marker = new Marker(id, title, snippet, lat, lng, state);
                 markerList.add(marker);
             } while (cursor.moveToNext());
         }
@@ -214,9 +219,10 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
                 @SuppressLint("Range") String snippet = cursor.getString(cursor.getColumnIndex(COLUMN_SNIPPET));
                 @SuppressLint("Range") Double lat = cursor.getDouble(cursor.getColumnIndex(COLUMN_LAT));
                 @SuppressLint("Range") Double lng = cursor.getDouble(cursor.getColumnIndex(COLUMN_LNG));
+                @SuppressLint("Range") Integer state = cursor.getInt(cursor.getColumnIndex(COLUMN_STATE));
 
                 // Marker 객체 생성 후 리스트에 추가
-                Marker marker = new Marker(id, title, snippet, lat, lng);
+                Marker marker = new Marker(id, title, snippet, lat, lng, state);
                 markerApproveList.add(marker);
             } while (cursor.moveToNext());
         }
@@ -224,6 +230,38 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
         db.close();
 
         return markerApproveList;
+    }
+
+    //마커 승인
+    public boolean acceptMarker(String id, String markerTitle) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        long result;
+
+        values.put(COLUMN_STATE, 1);
+
+        result = db.update(TABLE_NAME, values, COLUMN_ID + "=? AND " + COLUMN_TITLE + "=?", new String[]{id, markerTitle});
+
+        db.close();
+
+        return result != -1;
+    }
+
+    //마커 거부
+    public boolean refuseMarker(String id, String markerTitle) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        long result;
+
+        values.put(COLUMN_STATE, -1);
+
+        result = db.update(TABLE_NAME, values, COLUMN_ID + "=? AND " + COLUMN_TITLE + "=?", new String[]{id, markerTitle});
+
+        db.close();
+
+        return result != -1;
     }
 
     public Marker getMarkerById(String markerTitle) {
@@ -240,8 +278,9 @@ public class MarkerDBHelper extends SQLiteOpenHelper {
             @SuppressLint("Range") String snippet = cursor.getString(cursor.getColumnIndex(COLUMN_SNIPPET));
             @SuppressLint("Range") Double lat = cursor.getDouble(cursor.getColumnIndex(COLUMN_LAT));
             @SuppressLint("Range") Double lng = cursor.getDouble(cursor.getColumnIndex(COLUMN_LNG));
+            @SuppressLint("Range") Integer state = cursor.getInt(cursor.getColumnIndex(COLUMN_STATE));
             cursor.close();
-            return new Marker(id, title, snippet, lat, lng);
+            return new Marker(id, title, snippet, lat, lng, state);
         }
         return null;
     }

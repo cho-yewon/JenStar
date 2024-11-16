@@ -5,8 +5,11 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,11 +24,13 @@ public class admin_MarkerAdapter extends RecyclerView.Adapter<admin_MarkerAdapte
     private Context context;
     private String userId;
     private CompanyAddPageActivity companyAddPageActivity;
+    private MarkerDBHelper markerDBHelper;
 
     // Constructor
     public admin_MarkerAdapter(Context context, List<MarkerDBHelper.Marker> markerList) {
         this.markerList = markerList;
         this.context = context;
+        this.markerDBHelper = new MarkerDBHelper(context);
         this.companyAddPageActivity = new CompanyAddPageActivity(); // CompanyAddPageActivity 인스턴스 생성
         companyAddPageActivity.initializeFirebaseStorage(); // Firebase 초기화
     }
@@ -46,6 +51,32 @@ public class admin_MarkerAdapter extends RecyclerView.Adapter<admin_MarkerAdapte
         holder.markerSnippet.setText(marker.snippet);
         holder.markerLatLng.setText(marker.lat + ", " + marker.lng);
 
+        holder.acceptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean checkSuccess = markerDBHelper.acceptMarker(marker.id, marker.title);
+                if(checkSuccess) {
+                    Toast.makeText(context, "승인되었습니다.", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    Toast.makeText(context, "승인 실패.", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        holder.refuseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean checkSuccess = markerDBHelper.refuseMarker(marker.id, marker.title);
+                if(checkSuccess) {
+                    Toast.makeText(context, "거절되었습니다.", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(context, "거절 실패.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         companyAddPageActivity.loadImageFromFirebase(context, marker.title, holder.markerImage);
 
     }
@@ -59,6 +90,7 @@ public class admin_MarkerAdapter extends RecyclerView.Adapter<admin_MarkerAdapte
     public static class MarkerViewHolder extends RecyclerView.ViewHolder {
         public TextView markerTitle, markerSnippet, markerLatLng;
         public ImageView markerImage;
+        public Button acceptButton, refuseButton;
 
         public MarkerViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -66,6 +98,8 @@ public class admin_MarkerAdapter extends RecyclerView.Adapter<admin_MarkerAdapte
             markerTitle = itemView.findViewById(R.id.markerTitle);
             markerSnippet = itemView.findViewById(R.id.markerSnippet);
             markerLatLng = itemView.findViewById(R.id.markerLatLng);
+            acceptButton = itemView.findViewById(R.id.acceptButton);
+            refuseButton = itemView.findViewById(R.id.refuseButton);
         }
     }
 }

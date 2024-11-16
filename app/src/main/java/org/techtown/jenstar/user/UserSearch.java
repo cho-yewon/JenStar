@@ -260,7 +260,8 @@ public class UserSearch extends Fragment implements OnMapReadyCallback {
                 @SuppressLint("Range") String snippet = cursor.getString(cursor.getColumnIndex("snippet"));
                 @SuppressLint("Range") double lat = cursor.getDouble(cursor.getColumnIndex("lat"));
                 @SuppressLint("Range") double lng = cursor.getDouble(cursor.getColumnIndex("lng"));
-                MarkerDBHelper.Marker marker = new MarkerDBHelper.Marker(id, title, snippet, lat, lng);
+                @SuppressLint("Range") Integer state = cursor.getInt(cursor.getColumnIndex("state"));
+                MarkerDBHelper.Marker marker = new MarkerDBHelper.Marker(id, title, snippet, lat, lng, state);
                 markerList.add(marker);
             } while (cursor.moveToNext());
         }
@@ -294,13 +295,14 @@ public class UserSearch extends Fragment implements OnMapReadyCallback {
                     String id = cursor.getString(columnIndex);
                     @SuppressLint("Range") String title = cursor.getString(cursor.getColumnIndex("title"));
                     @SuppressLint("Range") String snippet = cursor.getString(cursor.getColumnIndex("snippet"));
+                    @SuppressLint("Range") Integer state = cursor.getInt(cursor.getColumnIndex("state"));
                     int latIndex = cursor.getColumnIndex("lat");
                     if (latIndex != -1) {
                         double lat = cursor.getDouble(latIndex);
                         int lngIndex = cursor.getColumnIndex("lng");
                         if (lngIndex != -1) {
                             double lng = cursor.getDouble(lngIndex);
-                            MarkerDBHelper.Marker marker = new MarkerDBHelper.Marker(id, title, snippet, lat, lng);
+                            MarkerDBHelper.Marker marker = new MarkerDBHelper.Marker(id, title, snippet, lat, lng, state);
                             markerList.add(marker);
                         }
 

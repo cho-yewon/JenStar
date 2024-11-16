@@ -15,7 +15,7 @@ public class UserFavoriteDBHelper extends SQLiteOpenHelper {
 
     // 데이터베이스 정보
     private static final String DATABASE_NAME = "UserDatabase.db";
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 13;
 
     // 테이블 정보
     private static final String TABLE_NAME = "user_favorites";

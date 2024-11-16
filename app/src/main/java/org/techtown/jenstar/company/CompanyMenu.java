@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.techtown.jenstar.marker.MarkerAdapter;
 import org.techtown.jenstar.database.MarkerDBHelper;
@@ -23,6 +24,7 @@ public class CompanyMenu extends Fragment {
     private MarkerAdapter markerAdapter;
     private MarkerDBHelper markerDBHelper;
     private String userId;
+
 
     @Nullable
     @Override
