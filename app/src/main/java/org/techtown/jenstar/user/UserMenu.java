@@ -15,7 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.techtown.jenstar.marker.MarkerAdapter;
+import org.techtown.jenstar.marker.user_MarkerAdapter;
 import org.techtown.jenstar.database.MarkerDBHelper;
 import org.techtown.jenstar.database.UserFavoriteDBHelper;
 import org.techtown.jenstar.R;
@@ -27,7 +27,7 @@ import java.util.Locale;
 
 public class UserMenu extends Fragment {
     private RecyclerView markerRecyclerView;
-    private MarkerAdapter markerAdapter;
+    private user_MarkerAdapter user_markerAdapter;
     private UserFavoriteDBHelper userFavoriteDBHelper;
     private MarkerDBHelper markerDBHelper;
     private String userId; // 사용자 ID
@@ -77,8 +77,8 @@ public class UserMenu extends Fragment {
         }
 
         // MarkerAdapter를 사용하여 즐겨찾기 마커 리스트 설정
-        markerAdapter = new MarkerAdapter(getContext(), favoriteMarkers, userId);
-        markerRecyclerView.setAdapter(markerAdapter);
+        user_markerAdapter = new user_MarkerAdapter(getContext(), favoriteMarkers, userId);
+        markerRecyclerView.setAdapter(user_markerAdapter);
 
         return view;
     }
